@@ -1,6 +1,7 @@
 package com.sarahmizzi.fyp;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -9,13 +10,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 
 import com.sarahmizzi.fyp.connection.HostManager;
+import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiCallback;
+import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiMethod;
+import com.sarahmizzi.fyp.kodi.jsonrpc.api.Input;
+import com.sarahmizzi.fyp.utils.RepeatListener;
+import com.sarahmizzi.fyp.utils.UIUtils;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     final String TAG = MainActivity.class.getSimpleName();
     private HostManager hostManager = null;
+    private Handler callbackHandler = new Handler();
+
+    private Animation buttonInAnim;
+    private Animation buttonOutAnim;
+
+    ImageButton leftButton;
+    ImageButton rightButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +49,17 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        hostManager = new HostManager(getApplicationContext());
+
+        buttonInAnim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.button_in);
+        buttonOutAnim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.button_out);
+
+        leftButton = (ImageButton) findViewById(R.id.left_arrow_button);
+        rightButton = (ImageButton) findViewById(R.id.right_arrow_button);
+
+        setupRepeatButton(leftButton, new Input.Left());
+        setupRepeatButton(rightButton, new Input.Right());
     }
 
     @Override
@@ -90,4 +118,16 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void setupRepeatButton(View button, final ApiMethod<String> action) {
+        button.setOnTouchListener(new RepeatListener(UIUtils.initialButtonRepeatInterval, UIUtils.buttonRepeatInterval,
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        action.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
+                    }
+                }, buttonInAnim, buttonOutAnim, MainActivity.this.getBaseContext()));
+    }
+
+    private ApiCallback<String> defaultActionCallback = ApiMethod.getDefaultActionCallback();
 }

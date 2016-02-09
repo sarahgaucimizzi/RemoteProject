@@ -11,19 +11,25 @@ public class HostInfo {
     public static final int DEFAULT_EVENT_SERVER_PORT = 9777;
     private static final String JSON_RPC_ENDPOINT = "/jsonrpc";
 
+    int id;
     String name;
     String address;
     int port;
     String username;
     String password;
 
-    public HostInfo(String name, String address, int port, String username, String password) {
+    public HostInfo(int id, String name, String address, int port, String username, String password) {
+        this.id = id;
         this.name = name;
         this.address = address;
         this.port = port;
         this.username = username;
         this.password = password;
     }
+
+    public int getId() { return id; }
+
+    public void setId(int id) { this.id = id; }
 
     public String getName() {
         return name;

@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.sarahmizzi.fyp.connection.HostConnection;
 import com.sarahmizzi.fyp.connection.HostInfo;
+import com.sarahmizzi.fyp.connection.HostManager;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiCallback;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiException;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.JSONRPC;
@@ -136,7 +137,7 @@ public class ConnectHostActivity extends AppCompatActivity {
             kodiPassword = null;
 
         // Ok, let's try to ping the host
-        final HostInfo checkedHostInfo = new HostInfo(kodiName, kodiAddress,
+        final HostInfo checkedHostInfo = new HostInfo(-1, kodiName, kodiAddress,
                 kodiHttpPort, kodiUsername, kodiPassword);
         //checkedHostInfo.setMacAddress(macAddress);
         //checkedHostInfo.setWolPort(xbmcWolPort);
@@ -167,6 +168,8 @@ public class ConnectHostActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String result) {
                 Log.d(TAG, "Successfully connected to new host through HTTP.");
+                HostManager hostManager = new HostManager(ConnectHostActivity.this.getApplicationContext());
+                hostManager.setCurrentHostInfo(hostInfo);
                 Intent intent = new Intent(ConnectHostActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
