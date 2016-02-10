@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -18,6 +19,7 @@ import android.widget.ImageButton;
 import com.sarahmizzi.fyp.connection.HostManager;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiCallback;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiMethod;
+import com.sarahmizzi.fyp.kodi.jsonrpc.api.GUI;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.Input;
 import com.sarahmizzi.fyp.utils.RepeatListener;
 import com.sarahmizzi.fyp.utils.UIUtils;
@@ -27,12 +29,17 @@ public class MainActivity extends AppCompatActivity
     final String TAG = MainActivity.class.getSimpleName();
     private HostManager hostManager = null;
     private Handler callbackHandler = new Handler();
+    private View.OnTouchListener feedbackTouchListener;
 
     private Animation buttonInAnim;
     private Animation buttonOutAnim;
 
+    ImageButton upButton;
+    ImageButton downButton;
     ImageButton leftButton;
     ImageButton rightButton;
+    ImageButton okButton;
+    ImageButton homeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,15 +58,48 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         hostManager = new HostManager(getApplicationContext());
+        feedbackTouchListener = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        buttonInAnim.setFillAfter(true);
+                        v.startAnimation(buttonInAnim);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        v.startAnimation(buttonOutAnim);
+                        break;
+                }
+                return false;
+            }
+        };
 
         buttonInAnim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.button_in);
         buttonOutAnim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.button_out);
 
+        upButton = (ImageButton) findViewById(R.id.up_arrow_button);
+        downButton = (ImageButton) findViewById(R.id.down_arrow_button);
         leftButton = (ImageButton) findViewById(R.id.left_arrow_button);
         rightButton = (ImageButton) findViewById(R.id.right_arrow_button);
 
+        okButton = (ImageButton) findViewById(R.id.ok_button);
+        homeButton = (ImageButton) findViewById(R.id.home_button);
+
+        setupRepeatButton(upButton, new Input.Up());
+        setupRepeatButton(downButton, new Input.Down());
         setupRepeatButton(leftButton, new Input.Left());
         setupRepeatButton(rightButton, new Input.Right());
+
+        setupDefaultButton(okButton, new Input.Select(), null);
+
+        homeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GUI.ActivateWindow action = new GUI.ActivateWindow(GUI.ActivateWindow.HOME);
+                action.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
+            }
+        });
     }
 
     @Override
@@ -127,6 +167,32 @@ public class MainActivity extends AppCompatActivity
                         action.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
                     }
                 }, buttonInAnim, buttonOutAnim, MainActivity.this.getBaseContext()));
+    }
+
+    private void setupDefaultButton(View button,
+                                    final ApiMethod<String> clickAction,
+                                    final ApiMethod<String> longClickAction) {
+        // Set animation
+        button.setOnTouchListener(feedbackTouchListener);
+        if (clickAction != null) {
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    UIUtils.handleVibration(MainActivity.this);
+                    clickAction.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
+                }
+            });
+        }
+        if (longClickAction != null) {
+            button.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    UIUtils.handleVibration(MainActivity.this);
+                    longClickAction.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
+                    return true;
+                }
+            });
+        }
     }
 
     private ApiCallback<String> defaultActionCallback = ApiMethod.getDefaultActionCallback();
