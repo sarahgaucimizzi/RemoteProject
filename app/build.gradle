@@ -21,6 +21,7 @@ android {
     packagingOptions {
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE-FIREBASE.txt'
     }
 }
 
@@ -32,4 +33,5 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.7.0'
     compile 'com.squareup.okhttp3:okhttp:3.0.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.firebase:firebase-client-android:2.5.0+'
 }

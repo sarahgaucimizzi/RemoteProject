@@ -2,6 +2,7 @@ package com.sarahmizzi.fyp;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,6 +17,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 
+import com.firebase.client.Firebase;
+import com.sarahmizzi.fyp.classes.Transaction;
 import com.sarahmizzi.fyp.connection.HostManager;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiCallback;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiMethod;
@@ -23,6 +26,8 @@ import com.sarahmizzi.fyp.kodi.jsonrpc.api.GUI;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.Input;
 import com.sarahmizzi.fyp.utils.RepeatListener;
 import com.sarahmizzi.fyp.utils.UIUtils;
+
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -33,6 +38,9 @@ public class MainActivity extends AppCompatActivity
 
     private Animation buttonInAnim;
     private Animation buttonOutAnim;
+
+    Firebase mFirebaseRef;
+    String uID;
 
     ImageButton upButton;
     ImageButton downButton;
@@ -56,6 +64,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mFirebaseRef = new Firebase("https://sweltering-torch-8619.firebaseio.com/android/transactions");
+        uID = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("UID", "error");
 
         hostManager = new HostManager(getApplicationContext());
         feedbackTouchListener = new View.OnTouchListener() {
@@ -86,16 +97,19 @@ public class MainActivity extends AppCompatActivity
         okButton = (ImageButton) findViewById(R.id.ok_button);
         homeButton = (ImageButton) findViewById(R.id.home_button);
 
-        setupRepeatButton(upButton, new Input.Up());
-        setupRepeatButton(downButton, new Input.Down());
-        setupRepeatButton(leftButton, new Input.Left());
-        setupRepeatButton(rightButton, new Input.Right());
+        setupRepeatButton(upButton, new Input.Up(), "UP");
+        setupRepeatButton(downButton, new Input.Down(), "DOWN");
+        setupRepeatButton(leftButton, new Input.Left(), "LEFT");
+        setupRepeatButton(rightButton, new Input.Right(), "RIGHT");
 
         setupDefaultButton(okButton, new Input.Select(), null);
 
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Transaction transaction = new Transaction(uID, "HOME");
+                Firebase transactionRef = mFirebaseRef.child(new UUID((long)10, (long)10).toString());
+                transactionRef.setValue(transaction);
                 GUI.ActivateWindow action = new GUI.ActivateWindow(GUI.ActivateWindow.HOME);
                 action.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
             }
@@ -159,11 +173,14 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void setupRepeatButton(View button, final ApiMethod<String> action) {
+    private void setupRepeatButton(View button, final ApiMethod<String> action, final String description) {
         button.setOnTouchListener(new RepeatListener(UIUtils.initialButtonRepeatInterval, UIUtils.buttonRepeatInterval,
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Transaction transaction = new Transaction(uID, description);
+                        Firebase transactionRef = mFirebaseRef.child(new UUID((long)10, (long)10).toString());
+                        transactionRef.setValue(transaction);
                         action.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
                     }
                 }, buttonInAnim, buttonOutAnim, MainActivity.this.getBaseContext()));
@@ -178,6 +195,9 @@ public class MainActivity extends AppCompatActivity
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Transaction transaction = new Transaction(uID, "OK");
+                    Firebase transactionRef = mFirebaseRef.child(new UUID((long)10, (long)10).toString());
+                    transactionRef.setValue(transaction);
                     UIUtils.handleVibration(MainActivity.this);
                     clickAction.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
                 }
@@ -187,6 +207,9 @@ public class MainActivity extends AppCompatActivity
             button.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
+                    Transaction transaction = new Transaction(uID, "OK");
+                    Firebase transactionRef = mFirebaseRef.child(new UUID((long)10, (long)10).toString());
+                    transactionRef.setValue(transaction);
                     UIUtils.handleVibration(MainActivity.this);
                     longClickAction.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
                     return true;
