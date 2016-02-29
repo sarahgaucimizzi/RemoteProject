@@ -11,10 +11,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiCallback;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiException;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiMethod;
+import com.sarahmizzi.fyp.notifications.Input;
+import com.sarahmizzi.fyp.notifications.Player;
+import com.sarahmizzi.fyp.notifications.System;
 
 import java.io.IOException;
 import java.net.ProtocolException;
-import java.net.Proxy;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -253,5 +255,23 @@ public class HostConnection {
             this.callback = callback;
             this.handler = handler;
         }
+    }
+
+    public interface PlayerNotificationsObserver {
+        public void onPlay(Player.OnPlay notification);
+        public void onPause(Player.OnPause notification);
+        public void onSpeedChanged(Player.OnSpeedChanged notification);
+        public void onSeek(Player.OnSeek notification);
+        public void onStop(Player.OnStop notification);
+    }
+
+    public interface SystemNotificationsObserver {
+        public void onQuit(System.OnQuit notification);
+        public void onRestart(System.OnRestart notification);
+        public void onSleep(System.OnSleep notification);
+    }
+
+    public interface InputNotificationsObserver {
+        public void onInputRequested(Input.OnInputRequested notification);
     }
 }

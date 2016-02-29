@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,23 +22,31 @@ import android.widget.TextView;
 
 import com.firebase.client.Firebase;
 import com.sarahmizzi.fyp.classes.Transaction;
+import com.sarahmizzi.fyp.connection.HostConnectionObserver;
+import com.sarahmizzi.fyp.connection.HostInfo;
 import com.sarahmizzi.fyp.connection.HostManager;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiCallback;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiMethod;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.GUI;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.Input;
+import com.sarahmizzi.fyp.kodi.jsonrpc.api.ListType;
+import com.sarahmizzi.fyp.kodi.jsonrpc.api.PlayerType;
 import com.sarahmizzi.fyp.utils.RepeatListener;
 import com.sarahmizzi.fyp.utils.TcpRequest;
 import com.sarahmizzi.fyp.utils.TcpClient;
 import com.sarahmizzi.fyp.utils.UIUtils;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, HostConnectionObserver.PlayerEventsObserver {
     final String TAG = MainActivity.class.getSimpleName();
 
     private HostManager hostManager = null;
+    private HostConnectionObserver hostConnectionObserver;
     private Handler callbackHandler = new Handler();
     private View.OnTouchListener feedbackTouchListener;
+
+    private int currentActivePlayerId = -1;
+    private String currentNowPlayingItemType = null;
 
     private Animation buttonInAnim;
     private Animation buttonOutAnim;
@@ -90,6 +99,7 @@ public class MainActivity extends AppCompatActivity
         email.setText(mUserPreferences.getString("EMAIL", ""));
 
         hostManager = new HostManager(getApplicationContext());
+        hostConnectionObserver = hostManager.getHostConnectionObserver();
         feedbackTouchListener = new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -167,6 +177,18 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        hostConnectionObserver.registerPlayerObserver(this, true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        hostConnectionObserver.unregisterPlayerObserver(this);
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -242,4 +264,152 @@ public class MainActivity extends AppCompatActivity
     }
 
     private ApiCallback<String> defaultActionCallback = ApiMethod.getDefaultActionCallback();
+
+    public void playerOnPlay(PlayerType.GetActivePlayersReturnType getActivePlayerResult,
+                             PlayerType.PropertyValue getPropertiesResult,
+                             ListType.ItemsAll getItemResult) {
+        setNowPlayingInfo(getItemResult, getPropertiesResult);
+        currentActivePlayerId = getActivePlayerResult.playerid;
+        currentNowPlayingItemType = getItemResult.type;
+        // Switch icon
+        //UIUtils.setPlayPauseButtonIcon(getActivity(), playButton, getPropertiesResult.speed);
+    }
+
+    public void playerOnPause(PlayerType.GetActivePlayersReturnType getActivePlayerResult,
+                              PlayerType.PropertyValue getPropertiesResult,
+                              ListType.ItemsAll getItemResult) {
+        setNowPlayingInfo(getItemResult, getPropertiesResult);
+        currentActivePlayerId = getActivePlayerResult.playerid;
+        currentNowPlayingItemType = getItemResult.type;
+        // Switch icon
+        //UIUtils.setPlayPauseButtonIcon(getActivity(), playButton, getPropertiesResult.speed);
+    }
+
+    public void playerOnStop() {
+        HostInfo hostInfo = hostManager.getHostInfo();
+
+        /*switchToPanel(R.id.info_panel, true);
+        infoTitle.setText(R.string.nothing_playing);
+        infoMessage.setText(String.format(getString(R.string.connected_to), hostInfo.getName()));*/
+    }
+
+    public void playerOnConnectionError(int errorCode, String description) {
+        HostInfo hostInfo = hostManager.getHostInfo();
+
+        /*switchToPanel(R.id.info_panel, false);
+        if (hostInfo != null) {
+            infoTitle.setText(R.string.connecting);
+            // TODO: check error code
+            infoMessage.setText(String.format(getString(R.string.connecting_to), hostInfo.getName(), hostInfo.getAddress()));
+        } else {
+            infoTitle.setText(R.string.no_xbmc_configured);
+            infoMessage.setText(null);
+        }*/
+    }
+
+    public void playerNoResultsYet() {
+        // Initialize info panel
+        /*switchToPanel(R.id.info_panel, false);
+        HostInfo hostInfo = hostManager.getHostInfo();
+        if (hostInfo != null) {
+            infoTitle.setText(R.string.connecting);
+        } else {
+            infoTitle.setText(R.string.no_xbmc_configured);
+        }
+        infoMessage.setText(null);*/
+    }
+
+    public void systemOnQuit() {
+        playerNoResultsYet();
+    }
+
+    public void inputOnInputRequested(String title, String type, String value) {}
+    public void observerOnStopObserving() {}
+
+    private void setNowPlayingInfo(ListType.ItemsAll nowPlaying,
+                                   PlayerType.PropertyValue properties) {
+        String title, underTitle, thumbnailUrl;
+        int currentRewindIcon, currentFastForwardIcon;
+
+        switch (nowPlaying.type) {
+            case ListType.ItemsAll.TYPE_MOVIE:
+                Log.d(TAG, nowPlaying.type.toString() + " : " + nowPlaying.title);
+                /*switchToPanel(R.id.media_panel, true);
+
+                title = nowPlaying.title;
+                underTitle = nowPlaying.tagline;
+                thumbnailUrl = nowPlaying.thumbnail;
+                currentFastForwardIcon = fastForwardIcon;
+                currentRewindIcon = rewindIcon;*/
+                break;
+            case ListType.ItemsAll.TYPE_EPISODE:
+                Log.d(TAG, nowPlaying.type.toString() + " : " + nowPlaying.title);
+                /*switchToPanel(R.id.media_panel, true);
+
+                title = nowPlaying.title;
+                String season = String.format(getString(R.string.season_episode_abbrev), nowPlaying.season, nowPlaying.episode);
+                underTitle = String.format("%s | %s", nowPlaying.showtitle, season);
+                thumbnailUrl = nowPlaying.art.poster;
+                currentFastForwardIcon = fastForwardIcon;
+                currentRewindIcon = rewindIcon;*/
+                break;
+            case ListType.ItemsAll.TYPE_SONG:
+                Log.d(TAG, nowPlaying.type.toString() + " : " + nowPlaying.title);
+                /*switchToPanel(R.id.media_panel, true);
+
+                title = nowPlaying.title;
+                underTitle = nowPlaying.displayartist + " | " + nowPlaying.album;
+                thumbnailUrl = nowPlaying.thumbnail;
+                currentFastForwardIcon = skipNextIcon;
+                currentRewindIcon = skipPreviousIcon;*/
+                break;
+            case ListType.ItemsAll.TYPE_MUSIC_VIDEO:
+                Log.d(TAG, nowPlaying.type.toString() + " : " + nowPlaying.title);
+                /*switchToPanel(R.id.media_panel, true);
+
+                title = nowPlaying.title;
+                underTitle = Utils.listStringConcat(nowPlaying.artist, ", ") + " | " + nowPlaying.album;
+                thumbnailUrl = nowPlaying.thumbnail;
+                currentFastForwardIcon = fastForwardIcon;
+                currentRewindIcon = rewindIcon;*/
+                break;
+            case ListType.ItemsAll.TYPE_CHANNEL:
+                Log.d(TAG, nowPlaying.type.toString() + " : " + nowPlaying.title);
+                /*switchToPanel(R.id.media_panel, true);
+
+                title = nowPlaying.label;
+                underTitle = nowPlaying.title;
+                thumbnailUrl = nowPlaying.thumbnail;
+                currentFastForwardIcon = fastForwardIcon;
+                currentRewindIcon = rewindIcon;*/
+                break;
+            default:
+                Log.d(TAG, nowPlaying.type.toString() + " - default case : " + nowPlaying.title);
+                /*switchToPanel(R.id.media_panel, true);
+                title = nowPlaying.label;
+                underTitle = "";
+                thumbnailUrl = nowPlaying.thumbnail;
+                currentFastForwardIcon = fastForwardIcon;
+                currentRewindIcon = rewindIcon;*/
+                break;
+        }
+
+        //nowPlayingTitle.setText(title);
+        //nowPlayingDetails.setText(underTitle);
+
+        //fastForwardButton.setImageResource(currentFastForwardIcon);
+        //rewindButton.setImageResource(currentRewindIcon);
+//        // If not video, change aspect ration of poster to a square
+//        boolean isVideo = (nowPlaying.type.equals(ListType.ItemsAll.TYPE_MOVIE)) ||
+//                (nowPlaying.type.equals(ListType.ItemsAll.TYPE_EPISODE));
+//        if (!isVideo) {
+//            ViewGroup.LayoutParams layoutParams = thumbnail.getLayoutParams();
+//            layoutParams.width = layoutParams.height;
+//            thumbnail.setLayoutParams(layoutParams);
+//        }
+
+        /*UIUtils.loadImageWithCharacterAvatar(getActivity(), hostManager,
+                thumbnailUrl, title,
+                thumbnail, thumbnail.getWidth(), thumbnail.getHeight());*/
+    }
 }

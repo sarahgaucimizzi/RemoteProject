@@ -26,6 +26,7 @@ public class HostManager {
     private ArrayList<HostInfo> hosts = new ArrayList<>();
     private static HostInfo currentHostInfo = null;
     private HostConnection currentHostConnection = null;
+    private HostConnectionObserver currentHostConnectionObserver = null;
 
     Context context;
 
@@ -150,5 +151,16 @@ public class HostManager {
             }
         }
         return currentHostConnection;
+    }
+
+
+    public HostConnectionObserver getHostConnectionObserver() {
+        if (currentHostConnectionObserver == null) {
+            currentHostConnection = getConnection();
+            if (currentHostConnection != null) {
+                currentHostConnectionObserver = new HostConnectionObserver(currentHostConnection);
+            }
+        }
+        return currentHostConnectionObserver;
     }
 }
