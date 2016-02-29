@@ -178,8 +178,8 @@ public class HostConnection {
     /**
      * Reads the response from the server
      *
-     * @param response Response from OkHttp
-     * @return Response body string
+     * @param response TcpResponse from OkHttp
+     * @return TcpResponse body string
      * @throws ApiException
      */
     private String handleOkHttpResponse(Response response) throws ApiException {

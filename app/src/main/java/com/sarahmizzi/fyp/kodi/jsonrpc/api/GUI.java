@@ -186,4 +186,28 @@ public class GUI {
             return JsonUtils.booleanFromJsonNode(jsonObject, RESULT_NODE);
         }
     }
+
+    /**
+     * Toggle fullscreen/GUI
+     */
+    public static final class ShowNotification extends ApiMethod<String> {
+        public final static String METHOD_NAME = "GUI.ShowNotification";
+
+        /**
+         * Toggle fullscreen/GUI
+         */
+        public ShowNotification(String title, String message) {
+            super();
+            addParameterToRequest("title", title);
+            addParameterToRequest("message", message);
+        }
+
+        @Override
+        public String getMethodName() { return METHOD_NAME; }
+
+        @Override
+        public String resultFromJson(ObjectNode jsonObject) throws ApiException {
+            return jsonObject.get(RESULT_NODE).textValue();
+        }
+    }
 }

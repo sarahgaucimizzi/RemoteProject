@@ -35,11 +35,22 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mFirebaseRef = new Firebase("https://sweltering-torch-8619.firebaseio.com/android/users");
+
+        // Check if logged in already
+        AuthData authData = mFirebaseRef.getAuth();
+        if(authData != null){
+            Intent intent = new Intent(LoginActivity.this, ConnectHostActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+        }
+
         setContentView(R.layout.activity_login);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mFirebaseRef = new Firebase("https://sweltering-torch-8619.firebaseio.com/android/users");
 
         username = (EditText) findViewById(R.id.username);
         age = (EditText) findViewById(R.id.age);
@@ -99,6 +110,7 @@ public class LoginActivity extends AppCompatActivity {
                 SharedPreferences preferences = getApplicationContext().getSharedPreferences("USER", MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("UID", authData.getUid());
+                editor.putString("EMAIL", username.getText().toString());
                 editor.commit();
                 Intent intent = new Intent(LoginActivity.this, ConnectHostActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

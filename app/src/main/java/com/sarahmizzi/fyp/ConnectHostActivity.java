@@ -1,6 +1,7 @@
 package com.sarahmizzi.fyp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.firebase.client.AuthData;
+import com.firebase.client.Firebase;
 import com.sarahmizzi.fyp.connection.HostConnection;
 import com.sarahmizzi.fyp.connection.HostInfo;
 import com.sarahmizzi.fyp.connection.HostManager;
@@ -32,6 +35,19 @@ public class ConnectHostActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Firebase ref = new Firebase("https://sweltering-torch-8619.firebaseio.com");
+
+        // If logged in connect
+        AuthData authData = ref.getAuth();
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("HOST", MODE_PRIVATE);
+        if(authData != null && preferences.contains("ADDRESS")){
+            HostInfo hostInfo = new HostInfo(-1, preferences.getString("NAME", "TV"), preferences.getString("ADDRESS", "error"),
+                    preferences.getInt("PORT", 8080), preferences.getString("USERNAME", "kodi"), preferences.getString("PASSWORD", "kodi"));
+
+            chainCallCheckHttpConnection(hostInfo);
+        }
+
         setContentView(R.layout.activity_connect_host);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -170,6 +186,14 @@ public class ConnectHostActivity extends AppCompatActivity {
                 Log.d(TAG, "Successfully connected to new host through HTTP.");
                 HostManager hostManager = new HostManager(ConnectHostActivity.this.getApplicationContext());
                 hostManager.setCurrentHostInfo(hostInfo);
+                SharedPreferences preferences = getApplicationContext().getSharedPreferences("HOST", MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("NAME", hostInfo.getName());
+                editor.putString("ADDRESS", hostInfo.getAddress());
+                editor.putInt("PORT", hostInfo.getPort());
+                editor.putString("USERNAME", hostInfo.getUsername());
+                editor.putString("PASSWORD", hostInfo.getPassword());
+                editor.commit();
                 Intent intent = new Intent(ConnectHostActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
