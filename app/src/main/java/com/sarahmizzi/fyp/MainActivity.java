@@ -19,9 +19,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import com.firebase.client.Firebase;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.sarahmizzi.fyp.classes.Transaction;
+import com.sarahmizzi.fyp.classes.Video;
 import com.sarahmizzi.fyp.connection.HostConnectionObserver;
 import com.sarahmizzi.fyp.connection.HostInfo;
 import com.sarahmizzi.fyp.connection.HostManager;
@@ -35,6 +40,12 @@ import com.sarahmizzi.fyp.utils.RepeatListener;
 import com.sarahmizzi.fyp.utils.TcpRequest;
 import com.sarahmizzi.fyp.utils.TcpClient;
 import com.sarahmizzi.fyp.utils.UIUtils;
+import org.json.JSONException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HostConnectionObserver.PlayerEventsObserver {
@@ -385,12 +396,23 @@ public class MainActivity extends AppCompatActivity
                 break;
             default:
                 Log.d(TAG, nowPlaying.type.toString() + " - default case : " + nowPlaying.title);
+                String videoID = nowPlaying.thumbnail.split("\\%2f")[4];
+                try {
+                    readJsonFromUrl("https://www.googleapis.com/youtube/v3/videos?part=snippet&id=" + videoID + "&key=AIzaSyB5Dyf5NFWhTErQ0J3o1iQYgZuEXR7AwLI", videoID);
+                }
+                catch(JSONException jE) {
+                    Log.e(TAG, "JSONEXCEPTION:" + jE.getMessage());
+                }
+                catch(IOException e){
+                    Log.e(TAG, "IOEXCEPTION:" + e.getMessage());
+                }
                 /*switchToPanel(R.id.media_panel, true);
                 title = nowPlaying.label;
                 underTitle = "";
                 thumbnailUrl = nowPlaying.thumbnail;
                 currentFastForwardIcon = fastForwardIcon;
                 currentRewindIcon = rewindIcon;*/
+
                 break;
         }
 
@@ -411,5 +433,51 @@ public class MainActivity extends AppCompatActivity
         /*UIUtils.loadImageWithCharacterAvatar(getActivity(), hostManager,
                 thumbnailUrl, title,
                 thumbnail, thumbnail.getWidth(), thumbnail.getHeight());*/
+    }
+
+    public void readJsonFromUrl(String link, String id) throws IOException, JSONException {
+        // Connect to the URL using java's native library
+        URL url = new URL(link);
+        HttpURLConnection request = (HttpURLConnection) url.openConnection();
+        request.connect();
+
+        // Convert to a JSON object to print data
+        com.google.gson.JsonParser jp = new com.google.gson.JsonParser();
+        //Convert the input stream to a json element
+        JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
+        JsonObject rootObj = root.getAsJsonObject();
+
+        JsonArray items = rootObj.getAsJsonArray("items");
+        JsonObject firstItem = items.get(0).getAsJsonObject();
+        JsonObject snippet = firstItem.getAsJsonObject("snippet");
+
+        // Get Title
+        String title = snippet.getAsJsonPrimitive("title").getAsString();
+
+        // Get Tags
+        JsonArray tagsArray = snippet.getAsJsonArray("tags");
+        Gson gson = new Gson();
+        String[] tags = gson.fromJson(tagsArray , String[].class);
+
+        // Get Category
+        int categoryId = snippet.getAsJsonPrimitive("categoryId").getAsInt();
+
+        url = new URL("https://www.googleapis.com/youtube/v3/videoCategories?part=snippet&id=" + categoryId + "&key=AIzaSyB5Dyf5NFWhTErQ0J3o1iQYgZuEXR7AwLI");
+        request = (HttpURLConnection) url.openConnection();
+        request.connect();
+
+        jp = new com.google.gson.JsonParser();
+        root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
+        rootObj = root.getAsJsonObject();
+        items = rootObj.getAsJsonArray("items");
+        firstItem = items.get(0).getAsJsonObject();
+        snippet = firstItem.getAsJsonObject("snippet");
+        String category = snippet.getAsJsonPrimitive("title").getAsString();
+
+        Video video = new Video(id, title, category, tags);
+
+        Firebase firebaseVideoRef = new Firebase("https://sweltering-torch-8619.firebaseio.com/android/video");
+        Firebase videoRef = firebaseVideoRef.child(uID);
+        videoRef.push().setValue(video);
     }
 }

@@ -35,4 +35,5 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.firebase:firebase-client-android:2.5.0+'
     compile 'com.esotericsoftware:kryonet:2.22.0-RC1'
+    compile 'com.google.code.gson:gson:2.6.2'
 }

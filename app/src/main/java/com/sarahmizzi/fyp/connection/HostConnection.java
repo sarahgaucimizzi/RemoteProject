@@ -37,7 +37,7 @@ import okhttp3.Route;
  */
 public class HostConnection {
     final String TAG = HostConnection.class.getSimpleName();
-    private static final int DEFAULT_CONNECT_TIMEOUT = 5000; // ms
+    private static final int DEFAULT_CONNECT_TIMEOUT = 10000; // ms
     public static final int PROTOCOL_HTTP = 1;
     private final int connectTimeout;
     private final HostInfo hostInfo;
