@@ -24,7 +24,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.sarahmizzi.fyp.classes.Transaction;
 import com.sarahmizzi.fyp.classes.Video;
 import com.sarahmizzi.fyp.connection.HostConnectionObserver;
@@ -33,8 +32,10 @@ import com.sarahmizzi.fyp.connection.HostManager;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiCallback;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiMethod;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.GUI;
+import com.sarahmizzi.fyp.kodi.jsonrpc.api.GlobalType;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.Input;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ListType;
+import com.sarahmizzi.fyp.kodi.jsonrpc.api.Player;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.PlayerType;
 import com.sarahmizzi.fyp.utils.RepeatListener;
 import com.sarahmizzi.fyp.utils.TcpRequest;
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity
 
     private int currentActivePlayerId = -1;
     private String currentNowPlayingItemType = null;
+    private boolean isPlaying = false;
+    private boolean isRewindorFastForward = false;
 
     private Animation buttonInAnim;
     private Animation buttonOutAnim;
@@ -68,15 +71,21 @@ public class MainActivity extends AppCompatActivity
     Firebase mFirebaseRef;
     String uID;
 
+    ImageButton rewindButton;
+    ImageButton fastForwardButton;
+    ImageButton stopButton;
+    ImageButton playPauseButton;
+    ImageButton volumeUpButton;
+    ImageButton volumeDownButton;
     ImageButton upButton;
     ImageButton downButton;
     ImageButton leftButton;
     ImageButton rightButton;
     ImageButton backButton;
-    ImageButton contextButton;
+    ImageButton infoButton;
     ImageButton okButton;
     ImageButton homeButton;
-    ImageButton infoButton;
+    ImageButton moreInfoButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,51 +140,26 @@ public class MainActivity extends AppCompatActivity
         buttonInAnim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.button_in);
         buttonOutAnim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.button_out);
 
+        rewindButton = (ImageButton) findViewById(R.id.rewind_button);
+        fastForwardButton = (ImageButton) findViewById(R.id.fastforward_button);
+        stopButton = (ImageButton) findViewById(R.id.stop_button);
+        playPauseButton = (ImageButton) findViewById(R.id.playpause_button);
+
+        volumeUpButton = (ImageButton) findViewById(R.id.volumeup_button);
+        volumeDownButton = (ImageButton) findViewById(R.id.volumedown_button);
+
         upButton = (ImageButton) findViewById(R.id.up_arrow_button);
         downButton = (ImageButton) findViewById(R.id.down_arrow_button);
         leftButton = (ImageButton) findViewById(R.id.left_arrow_button);
         rightButton = (ImageButton) findViewById(R.id.right_arrow_button);
 
         backButton = (ImageButton) findViewById(R.id.back_button);
-        contextButton = (ImageButton) findViewById(R.id.context_button);
+        infoButton = (ImageButton) findViewById(R.id.info_button);
         okButton = (ImageButton) findViewById(R.id.ok_button);
         homeButton = (ImageButton) findViewById(R.id.home_button);
-        infoButton = (ImageButton) findViewById(R.id.info_button);
+        moreInfoButton = (ImageButton) findViewById(R.id.more_info_button);
 
-        setupRepeatButton(upButton, new Input.Up(), "UP");
-        setupRepeatButton(downButton, new Input.Down(), "DOWN");
-        setupRepeatButton(leftButton, new Input.Left(), "LEFT");
-        setupRepeatButton(rightButton, new Input.Right(), "RIGHT");
-
-        setupDefaultButton(backButton, new Input.Back(), null, "BACK");
-        setupDefaultButton(contextButton, new Input.ExecuteAction(Input.ExecuteAction.CONTEXTMENU), null, "CONTEXT");
-        setupDefaultButton(okButton, new Input.Select(), null, "OK");
-
-        homeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Transaction transaction = new Transaction("HOME");
-                Firebase transactionRef = mFirebaseRef.child(uID);
-                transactionRef.push().setValue(transaction);
-                GUI.ActivateWindow action = new GUI.ActivateWindow(GUI.ActivateWindow.HOME);
-                action.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
-            }
-        });
-
-        infoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*Transaction transaction = new Transaction("INFO");
-                Firebase transactionRef = mFirebaseRef.child(uID);
-                transactionRef.push().setValue(transaction);
-                GUI.ShowNotification notification = new GUI.ShowNotification("Hello", "Woo it works!");
-                notification.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);*/
-
-                TcpRequest request = new TcpRequest();
-                request.methodName = "CONNECT";
-                tcpClient.getClient().sendTCP(request);
-            }
-        });
+        setupButtons();
     }
 
     @Override
@@ -228,6 +212,134 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    public void setupButtons(){
+        rewindButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Transaction transaction = new Transaction("REWIND");
+                Firebase transactionRef = mFirebaseRef.child(uID);
+                transactionRef.push().setValue(transaction);
+
+                isPlaying = false;
+                isRewindorFastForward = true;
+                setPlayPauseButton();
+
+                if (ListType.ItemsAll.TYPE_SONG.equals(currentNowPlayingItemType)) {
+                    Player.GoTo action = new Player.GoTo(currentActivePlayerId, Player.GoTo.PREVIOUS);
+                    action.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
+                } else {
+                    Player.SetSpeed action = new Player.SetSpeed(currentActivePlayerId, GlobalType.IncrementDecrement.DECREMENT);
+                    action.execute(hostManager.getConnection(), defaultPlaySpeedChangedCallback, callbackHandler);
+                }
+            }
+        });
+
+        fastForwardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Transaction transaction = new Transaction("FASTFORWARD");
+                Firebase transactionRef = mFirebaseRef.child(uID);
+                transactionRef.push().setValue(transaction);
+
+                isPlaying = false;
+                isRewindorFastForward = true;
+                setPlayPauseButton();
+
+                if (ListType.ItemsAll.TYPE_SONG.equals(currentNowPlayingItemType)) {
+                    Player.GoTo action = new Player.GoTo(currentActivePlayerId, Player.GoTo.NEXT);
+                    action.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
+                } else {
+                    Player.SetSpeed action = new Player.SetSpeed(currentActivePlayerId, GlobalType.IncrementDecrement.INCREMENT);
+                    action.execute(hostManager.getConnection(), defaultPlaySpeedChangedCallback, callbackHandler);
+                }
+            }
+        });
+
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Transaction transaction = new Transaction("STOP");
+                Firebase transactionRef = mFirebaseRef.child(uID);
+                transactionRef.push().setValue(transaction);
+
+                isPlaying = false;
+                isRewindorFastForward = false;
+
+                Player.Stop action = new Player.Stop(currentActivePlayerId);
+                action.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
+            }
+        });
+
+        playPauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Transaction transaction = new Transaction("PLAYPAUSE");
+                Firebase transactionRef = mFirebaseRef.child(uID);
+                transactionRef.push().setValue(transaction);
+
+                if(isRewindorFastForward){
+                    isPlaying = true;
+                    isRewindorFastForward = false;
+                }
+
+                Player.PlayPause action = new Player.PlayPause(currentActivePlayerId);
+                action.execute(hostManager.getConnection(), defaultPlaySpeedChangedCallback, callbackHandler);
+            }
+        });
+
+        setupVolumeRepeatButton(volumeDownButton,
+                new com.sarahmizzi.fyp.kodi.jsonrpc.api.Application.SetVolume(GlobalType.IncrementDecrement.DECREMENT));
+        setupVolumeRepeatButton(volumeUpButton,
+                new com.sarahmizzi.fyp.kodi.jsonrpc.api.Application.SetVolume(GlobalType.IncrementDecrement.INCREMENT));
+
+        setupRepeatButton(upButton, new Input.Up(), "UP");
+        setupRepeatButton(downButton, new Input.Down(), "DOWN");
+        setupRepeatButton(leftButton, new Input.Left(), "LEFT");
+        setupRepeatButton(rightButton, new Input.Right(), "RIGHT");
+
+        setupDefaultButton(backButton, new Input.Back(), null, "BACK");
+        setupDefaultButton(infoButton,
+                new Input.ExecuteAction(Input.ExecuteAction.INFO),
+                new Input.ExecuteAction(Input.ExecuteAction.CODECINFO),"INFO");
+        setupDefaultButton(okButton, new Input.Select(), null, "OK");
+
+        homeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Transaction transaction = new Transaction("HOME");
+                Firebase transactionRef = mFirebaseRef.child(uID);
+                transactionRef.push().setValue(transaction);
+                GUI.ActivateWindow action = new GUI.ActivateWindow(GUI.ActivateWindow.HOME);
+                action.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
+            }
+        });
+
+        moreInfoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Transaction transaction = new Transaction("MOREINFO");
+                Firebase transactionRef = mFirebaseRef.child(uID);
+                transactionRef.push().setValue(transaction);
+                /*GUI.ShowNotification notification = new GUI.ShowNotification("Hello", "Woo it works!");
+                notification.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);*/
+
+                TcpRequest request = new TcpRequest();
+                request.methodName = "CONNECT";
+                tcpClient.getClient().sendTCP(request);
+            }
+        });
+    }
+
+    private void setupVolumeRepeatButton(View button, final ApiMethod<Integer> action) {
+        button.setOnTouchListener(new RepeatListener(UIUtils.initialButtonRepeatInterval, UIUtils.buttonRepeatInterval,
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        action.execute(hostManager.getConnection(), defaultIntActionCallback, callbackHandler);
+                    }
+                }));
+    }
+
     private void setupRepeatButton(View button, final ApiMethod<String> action, final String description) {
         button.setOnTouchListener(new RepeatListener(UIUtils.initialButtonRepeatInterval, UIUtils.buttonRepeatInterval,
                 new View.OnClickListener() {
@@ -274,7 +386,27 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void setPlayPauseButton(){
+        if(isPlaying){
+            playPauseButton.setImageResource(R.drawable.ic_pause_black_48dp);
+        }
+        else{
+            playPauseButton.setImageResource(R.drawable.ic_play_black_48dp);
+        }
+    }
+
     private ApiCallback<String> defaultActionCallback = ApiMethod.getDefaultActionCallback();
+    private ApiCallback<Integer> defaultIntActionCallback = ApiMethod.getDefaultActionCallback();
+
+    private ApiCallback<Integer> defaultPlaySpeedChangedCallback = new ApiCallback<Integer>() {
+        @Override
+        public void onSuccess(Integer result) {
+            setPlayPauseButton();
+        }
+
+        @Override
+        public void onError(int errorCode, String description) { }
+    };
 
     public void playerOnPlay(PlayerType.GetActivePlayersReturnType getActivePlayerResult,
                              PlayerType.PropertyValue getPropertiesResult,
@@ -283,7 +415,8 @@ public class MainActivity extends AppCompatActivity
         currentActivePlayerId = getActivePlayerResult.playerid;
         currentNowPlayingItemType = getItemResult.type;
         // Switch icon
-        //UIUtils.setPlayPauseButtonIcon(getActivity(), playButton, getPropertiesResult.speed);
+        isPlaying = true;
+        setPlayPauseButton();
     }
 
     public void playerOnPause(PlayerType.GetActivePlayersReturnType getActivePlayerResult,
@@ -293,12 +426,15 @@ public class MainActivity extends AppCompatActivity
         currentActivePlayerId = getActivePlayerResult.playerid;
         currentNowPlayingItemType = getItemResult.type;
         // Switch icon
-        //UIUtils.setPlayPauseButtonIcon(getActivity(), playButton, getPropertiesResult.speed);
+        isPlaying = false;
+        setPlayPauseButton();
     }
 
     public void playerOnStop() {
         HostInfo hostInfo = hostManager.getHostInfo();
 
+        isPlaying = false;
+        setPlayPauseButton();
         /*switchToPanel(R.id.info_panel, true);
         infoTitle.setText(R.string.nothing_playing);
         infoMessage.setText(String.format(getString(R.string.connected_to), hostInfo.getName()));*/
@@ -310,7 +446,7 @@ public class MainActivity extends AppCompatActivity
         /*switchToPanel(R.id.info_panel, false);
         if (hostInfo != null) {
             infoTitle.setText(R.string.connecting);
-            // TODO: check error code
+            // check error code
             infoMessage.setText(String.format(getString(R.string.connecting_to), hostInfo.getName(), hostInfo.getAddress()));
         } else {
             infoTitle.setText(R.string.no_xbmc_configured);

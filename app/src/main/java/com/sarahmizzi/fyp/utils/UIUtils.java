@@ -1,8 +1,12 @@
 package com.sarahmizzi.fyp.utils;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.widget.ImageView;
+
+import com.sarahmizzi.fyp.R;
 
 /**
  * Created by Sarah on 09-Feb-16.
