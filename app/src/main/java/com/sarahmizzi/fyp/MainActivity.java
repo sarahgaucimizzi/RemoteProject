@@ -18,12 +18,20 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.sarahmizzi.fyp.classes.RemoteButtonData;
 import com.sarahmizzi.fyp.classes.Transaction;
 import com.sarahmizzi.fyp.classes.Video;
 import com.sarahmizzi.fyp.connection.HostConnectionObserver;
@@ -41,12 +49,15 @@ import com.sarahmizzi.fyp.utils.RepeatListener;
 import com.sarahmizzi.fyp.utils.TcpRequest;
 import com.sarahmizzi.fyp.utils.TcpClient;
 import com.sarahmizzi.fyp.utils.UIUtils;
+
 import org.json.JSONException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HostConnectionObserver.PlayerEventsObserver {
@@ -71,6 +82,9 @@ public class MainActivity extends AppCompatActivity
     Firebase mFirebaseRef;
     String uID;
 
+    LinearLayout defaultUI;
+    RelativeLayout adaptiveUI;
+
     ImageButton rewindButton;
     ImageButton fastForwardButton;
     ImageButton stopButton;
@@ -86,6 +100,40 @@ public class MainActivity extends AppCompatActivity
     ImageButton okButton;
     ImageButton homeButton;
     ImageButton moreInfoButton;
+
+    ImageButton button1;
+    ImageButton button2;
+    ImageButton button3;
+    ImageButton button4;
+    ImageButton button5;
+    ImageButton button6;
+    ImageButton button7;
+    ImageButton button8;
+    ImageButton button9;
+    ImageButton button10;
+    ImageButton button11;
+    ImageButton button12;
+    ImageButton button13;
+    ImageButton button14;
+    ImageButton button15;
+
+    String[] buttonTypes = {
+            "REWIND",
+            "FASTFORWARD",
+            "STOP",
+            "PLAYPAUSE",
+            "VOLUMEUP",
+            "VOLUMEDOWN",
+            "UP",
+            "DOWN",
+            "LEFT",
+            "RIGHT",
+            "BACK",
+            "INFO",
+            "OK",
+            "HOME",
+            "MOREINFO"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +185,9 @@ public class MainActivity extends AppCompatActivity
             }
         };
 
+        defaultUI = (LinearLayout) findViewById(R.id.default_remote);
+        adaptiveUI = (RelativeLayout) findViewById(R.id.adaptive_remote);
+
         buttonInAnim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.button_in);
         buttonOutAnim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.button_out);
 
@@ -158,6 +209,22 @@ public class MainActivity extends AppCompatActivity
         okButton = (ImageButton) findViewById(R.id.ok_button);
         homeButton = (ImageButton) findViewById(R.id.home_button);
         moreInfoButton = (ImageButton) findViewById(R.id.more_info_button);
+
+        button1 = (ImageButton) findViewById(R.id.button1);
+        button2 = (ImageButton) findViewById(R.id.button2);
+        button3 = (ImageButton) findViewById(R.id.button3);
+        button4 = (ImageButton) findViewById(R.id.button4);
+        button5 = (ImageButton) findViewById(R.id.button5);
+        button6 = (ImageButton) findViewById(R.id.button6);
+        button7 = (ImageButton) findViewById(R.id.button7);
+        button8 = (ImageButton) findViewById(R.id.button8);
+        button9 = (ImageButton) findViewById(R.id.button9);
+        button10 = (ImageButton) findViewById(R.id.button10);
+        button11 = (ImageButton) findViewById(R.id.button11);
+        button12 = (ImageButton) findViewById(R.id.button12);
+        button13 = (ImageButton) findViewById(R.id.button13);
+        button14 = (ImageButton) findViewById(R.id.button14);
+        button15 = (ImageButton) findViewById(R.id.button15);
 
         setupButtons();
     }
@@ -196,8 +263,8 @@ public class MainActivity extends AppCompatActivity
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
-        } else if (id == R.id.nav_manage) {
-            // Show dialog on TV or mobile
+        } else if (id == R.id.nav_update) {
+            updateRemote();
         } else if (id == R.id.nav_logout) {
             mFirebaseRef.unauth();
             mUserPreferences.edit().clear().commit();
@@ -212,11 +279,11 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void setupButtons(){
+    public void setupButtons() {
         rewindButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Transaction transaction = new Transaction("REWIND");
+                Transaction transaction = new Transaction(buttonTypes[0]);
                 Firebase transactionRef = mFirebaseRef.child(uID);
                 transactionRef.push().setValue(transaction);
 
@@ -237,7 +304,7 @@ public class MainActivity extends AppCompatActivity
         fastForwardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Transaction transaction = new Transaction("FASTFORWARD");
+                Transaction transaction = new Transaction(buttonTypes[1]);
                 Firebase transactionRef = mFirebaseRef.child(uID);
                 transactionRef.push().setValue(transaction);
 
@@ -258,7 +325,7 @@ public class MainActivity extends AppCompatActivity
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Transaction transaction = new Transaction("STOP");
+                Transaction transaction = new Transaction(buttonTypes[2]);
                 Firebase transactionRef = mFirebaseRef.child(uID);
                 transactionRef.push().setValue(transaction);
 
@@ -273,11 +340,11 @@ public class MainActivity extends AppCompatActivity
         playPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Transaction transaction = new Transaction("PLAYPAUSE");
+                Transaction transaction = new Transaction(buttonTypes[3]);
                 Firebase transactionRef = mFirebaseRef.child(uID);
                 transactionRef.push().setValue(transaction);
 
-                if(isRewindorFastForward){
+                if (isRewindorFastForward) {
                     isPlaying = true;
                     isRewindorFastForward = false;
                 }
@@ -287,26 +354,26 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        setupVolumeRepeatButton(volumeDownButton,
-                new com.sarahmizzi.fyp.kodi.jsonrpc.api.Application.SetVolume(GlobalType.IncrementDecrement.DECREMENT));
         setupVolumeRepeatButton(volumeUpButton,
-                new com.sarahmizzi.fyp.kodi.jsonrpc.api.Application.SetVolume(GlobalType.IncrementDecrement.INCREMENT));
+                new com.sarahmizzi.fyp.kodi.jsonrpc.api.Application.SetVolume(GlobalType.IncrementDecrement.INCREMENT), buttonTypes[4]);
+        setupVolumeRepeatButton(volumeDownButton,
+                new com.sarahmizzi.fyp.kodi.jsonrpc.api.Application.SetVolume(GlobalType.IncrementDecrement.DECREMENT), buttonTypes[5]);
 
-        setupRepeatButton(upButton, new Input.Up(), "UP");
-        setupRepeatButton(downButton, new Input.Down(), "DOWN");
-        setupRepeatButton(leftButton, new Input.Left(), "LEFT");
-        setupRepeatButton(rightButton, new Input.Right(), "RIGHT");
+        setupRepeatButton(upButton, new Input.Up(), buttonTypes[6]);
+        setupRepeatButton(downButton, new Input.Down(), buttonTypes[7]);
+        setupRepeatButton(leftButton, new Input.Left(), buttonTypes[8]);
+        setupRepeatButton(rightButton, new Input.Right(), buttonTypes[9]);
 
-        setupDefaultButton(backButton, new Input.Back(), null, "BACK");
+        setupDefaultButton(backButton, new Input.Back(), null, buttonTypes[10]);
         setupDefaultButton(infoButton,
                 new Input.ExecuteAction(Input.ExecuteAction.INFO),
-                new Input.ExecuteAction(Input.ExecuteAction.CODECINFO),"INFO");
-        setupDefaultButton(okButton, new Input.Select(), null, "OK");
+                new Input.ExecuteAction(Input.ExecuteAction.CODECINFO), buttonTypes[11]);
+        setupDefaultButton(okButton, new Input.Select(), null, buttonTypes[12]);
 
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Transaction transaction = new Transaction("HOME");
+                Transaction transaction = new Transaction(buttonTypes[13]);
                 Firebase transactionRef = mFirebaseRef.child(uID);
                 transactionRef.push().setValue(transaction);
                 GUI.ActivateWindow action = new GUI.ActivateWindow(GUI.ActivateWindow.HOME);
@@ -317,7 +384,7 @@ public class MainActivity extends AppCompatActivity
         moreInfoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Transaction transaction = new Transaction("MOREINFO");
+                Transaction transaction = new Transaction(buttonTypes[14]);
                 Firebase transactionRef = mFirebaseRef.child(uID);
                 transactionRef.push().setValue(transaction);
                 /*GUI.ShowNotification notification = new GUI.ShowNotification("Hello", "Woo it works!");
@@ -330,11 +397,15 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setupVolumeRepeatButton(View button, final ApiMethod<Integer> action) {
+    private void setupVolumeRepeatButton(View button, final ApiMethod<Integer> action, final String descripton) {
         button.setOnTouchListener(new RepeatListener(UIUtils.initialButtonRepeatInterval, UIUtils.buttonRepeatInterval,
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Transaction transaction = new Transaction(descripton);
+                        Firebase transactionRef = mFirebaseRef.child(uID);
+                        transactionRef.push().setValue(transaction);
+
                         action.execute(hostManager.getConnection(), defaultIntActionCallback, callbackHandler);
                     }
                 }));
@@ -386,11 +457,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void setPlayPauseButton(){
-        if(isPlaying){
+    public void setPlayPauseButton() {
+        if (isPlaying) {
             playPauseButton.setImageResource(R.drawable.ic_pause_black_48dp);
-        }
-        else{
+        } else {
             playPauseButton.setImageResource(R.drawable.ic_play_black_48dp);
         }
     }
@@ -405,7 +475,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        public void onError(int errorCode, String description) { }
+        public void onError(int errorCode, String description) {
+        }
     };
 
     public void playerOnPlay(PlayerType.GetActivePlayersReturnType getActivePlayerResult,
@@ -470,8 +541,11 @@ public class MainActivity extends AppCompatActivity
         playerNoResultsYet();
     }
 
-    public void inputOnInputRequested(String title, String type, String value) {}
-    public void observerOnStopObserving() {}
+    public void inputOnInputRequested(String title, String type, String value) {
+    }
+
+    public void observerOnStopObserving() {
+    }
 
     private void setNowPlayingInfo(ListType.ItemsAll nowPlaying,
                                    PlayerType.PropertyValue properties) {
@@ -535,11 +609,9 @@ public class MainActivity extends AppCompatActivity
                 String videoID = nowPlaying.thumbnail.split("\\%2f")[4];
                 try {
                     readJsonFromUrl("https://www.googleapis.com/youtube/v3/videos?part=snippet&id=" + videoID + "&key=AIzaSyB5Dyf5NFWhTErQ0J3o1iQYgZuEXR7AwLI", videoID);
-                }
-                catch(JSONException jE) {
+                } catch (JSONException jE) {
                     Log.e(TAG, "JSONEXCEPTION:" + jE.getMessage());
-                }
-                catch(IOException e){
+                } catch (IOException e) {
                     Log.e(TAG, "IOEXCEPTION:" + e.getMessage());
                 }
                 /*switchToPanel(R.id.media_panel, true);
@@ -593,7 +665,7 @@ public class MainActivity extends AppCompatActivity
         // Get Tags
         JsonArray tagsArray = snippet.getAsJsonArray("tags");
         Gson gson = new Gson();
-        String[] tags = gson.fromJson(tagsArray , String[].class);
+        String[] tags = gson.fromJson(tagsArray, String[].class);
 
         // Get Category
         int categoryId = snippet.getAsJsonPrimitive("categoryId").getAsInt();
@@ -615,5 +687,340 @@ public class MainActivity extends AppCompatActivity
         Firebase firebaseVideoRef = new Firebase("https://sweltering-torch-8619.firebaseio.com/android/video");
         Firebase videoRef = firebaseVideoRef.child(uID);
         videoRef.push().setValue(video);
+    }
+
+    public void updateRemote() {
+        final ArrayList<RemoteButtonData> remoteButtonTransactionData = new ArrayList<>();
+
+        Query queryRef = mFirebaseRef.child(uID);
+
+        queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot querySnapshot) {
+                for(int i = 0; i < buttonTypes.length; i++){
+                    remoteButtonTransactionData.add(new RemoteButtonData(buttonTypes[i], 0));
+                }
+                for (DataSnapshot currentDataSnapshot : querySnapshot.getChildren()) {
+                    Transaction current = currentDataSnapshot.getChildren().iterator().next().getValue(Transaction.class);
+
+                    for(int j = 0; j < remoteButtonTransactionData.size(); j++){
+                        if(current.getDescription().equals(remoteButtonTransactionData.get(j).getDescription())){
+                            remoteButtonTransactionData.get(j).incrementCount();
+                            break;
+                        }
+                    }
+                }
+
+                updateRemoteUI(sortByMostFrequentlyUsed(remoteButtonTransactionData));
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+                Log.e(TAG, error.getMessage());
+            }
+        });
+    }
+
+    public ArrayList<RemoteButtonData> sortByMostFrequentlyUsed(ArrayList<RemoteButtonData> list){
+        ArrayList<RemoteButtonData> sortedList = new ArrayList<>();
+        sortedList.add(list.get(0));
+
+        for(int i = 1; i < list.size(); i++){
+            for(int j = 0; j < sortedList.size(); j++){
+                if((list.get(i).getCount() < sortedList.get(j).getCount()) && (j == (sortedList.size() - 1))){
+                    sortedList.add(list.get(i));
+                }
+                else if((list.get(i).getCount() < sortedList.get(j).getCount())){
+                    continue;
+                }
+                else if((list.get(i).getCount() > sortedList.get(j).getCount())){
+                    sortedList.add(j, list.get(i));
+                    break;
+                }
+            }
+        }
+
+        return sortedList;
+    }
+
+    public void updateRemoteUI(ArrayList<RemoteButtonData> sortedList){
+        defaultUI.setVisibility(View.GONE);
+        adaptiveUI.setVisibility(View.VISIBLE);
+
+        ArrayList<Transaction> list = new ArrayList<>();
+        ArrayList<ImageButton> buttonsList = new ArrayList<>();
+
+        buttonsList.add(button1);
+        buttonsList.add(button2);
+        buttonsList.add(button3);
+        buttonsList.add(button4);
+        buttonsList.add(button5);
+        buttonsList.add(button6);
+        buttonsList.add(button7);
+        buttonsList.add(button8);
+        buttonsList.add(button9);
+        buttonsList.add(button10);
+        buttonsList.add(button11);
+        buttonsList.add(button12);
+        buttonsList.add(button13);
+        buttonsList.add(button14);
+        buttonsList.add(button15);
+
+        for(int i = 0; i < buttonTypes.length; i++){
+            list.add(new Transaction(buttonTypes[i]));
+        }
+
+        for(int i = 0; i < sortedList.size(); i++){
+            switch(sortedList.get(i).getDescription()){
+                case "REWIND":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_rewind_black_48dp);
+                    rewindButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    for(Transaction item : list){
+                        if(item.getDescription().equals("REWIND")){
+                            list.remove(item);
+                            break;
+                        }
+                    }
+                    break;
+                case "FASTFORWARD":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_fast_forward_black_48dp);
+                    fastForwardButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    for(Transaction item : list){
+                        if(item.getDescription().equals("FASTFORWARD")){
+                            list.remove(item);
+                            break;
+                        }
+                    }
+                    break;
+                case "STOP":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_stop_black_48dp);
+                    stopButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    for(Transaction item : list){
+                        if(item.getDescription().equals("STOP")){
+                            list.remove(item);
+                            break;
+                        }
+                    }
+                    break;
+                case "PLAYPAUSE":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_play_black_48dp);
+                    playPauseButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    for(Transaction item : list){
+                        if(item.getDescription().equals("PLAYPAUSE")){
+                            list.remove(item);
+                            break;
+                        }
+                    }
+                    break;
+                case "VOLUMEUP":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_volume_high_black_48dp);
+                    volumeUpButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    for(Transaction item : list){
+                        if(item.getDescription().equals("VOLUMEUP")){
+                            list.remove(item);
+                            break;
+                        }
+                    }
+                    break;
+                case "VOLUMEDOWN":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_volume_medium_black_48dp);
+                    volumeDownButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    for(Transaction item : list){
+                        if(item.getDescription().equals("VOLUMEDOWN")){
+                            list.remove(item);
+                            break;
+                        }
+                    }
+                    break;
+                case "UP":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_arrow_up_black_48dp);
+                    upButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    for(Transaction item : list){
+                        if(item.getDescription().equals("UP")){
+                            list.remove(item);
+                            break;
+                        }
+                    }
+                    break;
+                case "DOWN":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_arrow_down_black_48dp);
+                    downButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    for(Transaction item : list){
+                        if(item.getDescription().equals("DOWN")){
+                            list.remove(item);
+                            break;
+                        }
+                    }
+                    break;
+                case"LEFT":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_arrow_left_black_48dp);
+                    leftButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    for(Transaction item : list){
+                        if(item.getDescription().equals("LEFT")){
+                            list.remove(item);
+                            break;
+                        }
+                    }
+                    break;
+                case "RIGHT":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_arrow_right_black_48dp);
+                    rightButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    for(Transaction item : list){
+                        if(item.getDescription().equals("RIGHT")){
+                            list.remove(item);
+                            break;
+                        }
+                    }
+                    break;
+                case "BACK":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_arrow_left_bold_circle_black_48dp);
+                    backButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    for(Transaction item : list){
+                        if(item.getDescription().equals("BACK")){
+                            list.remove(item);
+                            break;
+                        }
+                    }
+                    break;
+                case "INFO":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_information_black_48dp);
+                    infoButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    for(Transaction item : list){
+                        if(item.getDescription().equals("INFO")){
+                            list.remove(item);
+                            break;
+                        }
+                    }
+                    break;
+                case "OK":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_checkbox_blank_circle_black_48dp);
+                    okButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    for(Transaction item : list){
+                        if(item.getDescription().equals("OK")){
+                            list.remove(item);
+                            break;
+                        }
+                    }
+                    break;
+                case "HOME":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_home_black_48dp);
+                    homeButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    for(Transaction item : list){
+                        if(item.getDescription().equals("HOME")){
+                            list.remove(item);
+                            break;
+                        }
+                    }
+                    break;
+                case "MOREINFO":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_window_restore_black_48dp);
+                    moreInfoButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    for(Transaction item : list){
+                        if(item.getDescription().equals("MOREINFO")){
+                            list.remove(item);
+                            break;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        for(int i = 0; i < list.size(); i++){
+            switch(list.get(i).getDescription()){
+                case "REWIND":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_rewind_black_48dp);
+                    rewindButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    break;
+                case "FASTFORWARD":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_fast_forward_black_48dp);
+                    fastForwardButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    break;
+                case "STOP":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_stop_black_48dp);
+                    stopButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    break;
+                case "PLAYPAUSE":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_play_black_48dp);
+                    playPauseButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    break;
+                case "VOLUMEUP":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_volume_high_black_48dp);
+                    volumeUpButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    break;
+                case "VOLUMEDOWN":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_volume_medium_black_48dp);
+                    volumeDownButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    break;
+                case "UP":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_arrow_up_black_48dp);
+                    upButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    break;
+                case "DOWN":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_arrow_down_black_48dp);
+                    downButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    break;
+                case"LEFT":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_arrow_left_black_48dp);
+                    leftButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    break;
+                case "RIGHT":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_arrow_right_black_48dp);
+                    rightButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    break;
+                case "BACK":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_arrow_left_bold_circle_black_48dp);
+                    backButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    break;
+                case "INFO":
+                    buttonsList.get(0).setImageResource(R.drawable.information);
+                    infoButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    break;
+                case "OK":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_checkbox_blank_circle_black_48dp);
+                    okButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    break;
+                case "HOME":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_home_black_48dp);
+                    homeButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    break;
+                case "MOREINFO":
+                    buttonsList.get(0).setImageResource(R.drawable.ic_window_restore_black_48dp);
+                    moreInfoButton = buttonsList.get(0);
+                    buttonsList.remove(0);
+                    break;
+            }
+        }
+
+        setupButtons();
     }
 }
