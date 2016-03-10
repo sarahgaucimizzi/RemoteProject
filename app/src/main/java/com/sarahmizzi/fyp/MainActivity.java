@@ -31,8 +31,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.sarahmizzi.fyp.classes.LayoutLog;
 import com.sarahmizzi.fyp.classes.RemoteButtonData;
-import com.sarahmizzi.fyp.classes.Transaction;
+import com.sarahmizzi.fyp.classes.ButtonTransaction;
 import com.sarahmizzi.fyp.classes.Video;
 import com.sarahmizzi.fyp.connection.HostConnectionObserver;
 import com.sarahmizzi.fyp.connection.HostInfo;
@@ -58,6 +59,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HostConnectionObserver.PlayerEventsObserver {
@@ -79,7 +81,8 @@ public class MainActivity extends AppCompatActivity
     SharedPreferences mUserPreferences;
     SharedPreferences mHostPreferences;
     TcpClient tcpClient;
-    Firebase mFirebaseRef;
+    Firebase mFirebaseButtonRef;
+    Firebase mFirebaseLayoutRef;
     String uID;
 
     LinearLayout defaultUI;
@@ -161,7 +164,9 @@ public class MainActivity extends AppCompatActivity
         mHostPreferences = getApplicationContext().getSharedPreferences("HOST", MODE_PRIVATE);
         tcpClient = new TcpClient(mHostPreferences.getString("ADDRESS", "error"));
 
-        mFirebaseRef = new Firebase("https://sweltering-torch-8619.firebaseio.com/android/transactions");
+        mFirebaseButtonRef = new Firebase("https://sweltering-torch-8619.firebaseio.com/android/button_transactions");
+        mFirebaseLayoutRef = new Firebase("https://sweltering-torch-8619.firebaseio.com/android/layout_logs");
+
         mUserPreferences = getApplicationContext().getSharedPreferences("USER", MODE_PRIVATE);
         uID = mUserPreferences.getString("UID", "error");
         email.setText(mUserPreferences.getString("EMAIL", ""));
@@ -191,6 +196,11 @@ public class MainActivity extends AppCompatActivity
         buttonInAnim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.button_in);
         buttonOutAnim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.button_out);
 
+        loadButtons();
+        setupButtons();
+    }
+
+    public void loadButtons(){
         rewindButton = (ImageButton) findViewById(R.id.rewind_button);
         fastForwardButton = (ImageButton) findViewById(R.id.fastforward_button);
         stopButton = (ImageButton) findViewById(R.id.stop_button);
@@ -225,8 +235,6 @@ public class MainActivity extends AppCompatActivity
         button13 = (ImageButton) findViewById(R.id.button13);
         button14 = (ImageButton) findViewById(R.id.button14);
         button15 = (ImageButton) findViewById(R.id.button15);
-
-        setupButtons();
     }
 
     @Override
@@ -265,8 +273,10 @@ public class MainActivity extends AppCompatActivity
             finish();
         } else if (id == R.id.nav_update) {
             updateRemote();
+        } else if(id == R.id.nav_default_ui){
+            loadDefaultRemote();
         } else if (id == R.id.nav_logout) {
-            mFirebaseRef.unauth();
+            mFirebaseButtonRef.unauth();
             mUserPreferences.edit().clear().commit();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -283,8 +293,8 @@ public class MainActivity extends AppCompatActivity
         rewindButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Transaction transaction = new Transaction(buttonTypes[0]);
-                Firebase transactionRef = mFirebaseRef.child(uID);
+                ButtonTransaction transaction = new ButtonTransaction(buttonTypes[0]);
+                Firebase transactionRef = mFirebaseButtonRef.child(uID);
                 transactionRef.push().setValue(transaction);
 
                 isPlaying = false;
@@ -304,8 +314,8 @@ public class MainActivity extends AppCompatActivity
         fastForwardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Transaction transaction = new Transaction(buttonTypes[1]);
-                Firebase transactionRef = mFirebaseRef.child(uID);
+                ButtonTransaction transaction = new ButtonTransaction(buttonTypes[1]);
+                Firebase transactionRef = mFirebaseButtonRef.child(uID);
                 transactionRef.push().setValue(transaction);
 
                 isPlaying = false;
@@ -325,8 +335,8 @@ public class MainActivity extends AppCompatActivity
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Transaction transaction = new Transaction(buttonTypes[2]);
-                Firebase transactionRef = mFirebaseRef.child(uID);
+                ButtonTransaction transaction = new ButtonTransaction(buttonTypes[2]);
+                Firebase transactionRef = mFirebaseButtonRef.child(uID);
                 transactionRef.push().setValue(transaction);
 
                 isPlaying = false;
@@ -340,8 +350,8 @@ public class MainActivity extends AppCompatActivity
         playPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Transaction transaction = new Transaction(buttonTypes[3]);
-                Firebase transactionRef = mFirebaseRef.child(uID);
+                ButtonTransaction transaction = new ButtonTransaction(buttonTypes[3]);
+                Firebase transactionRef = mFirebaseButtonRef.child(uID);
                 transactionRef.push().setValue(transaction);
 
                 if (isRewindorFastForward) {
@@ -373,8 +383,8 @@ public class MainActivity extends AppCompatActivity
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Transaction transaction = new Transaction(buttonTypes[13]);
-                Firebase transactionRef = mFirebaseRef.child(uID);
+                ButtonTransaction transaction = new ButtonTransaction(buttonTypes[13]);
+                Firebase transactionRef = mFirebaseButtonRef.child(uID);
                 transactionRef.push().setValue(transaction);
                 GUI.ActivateWindow action = new GUI.ActivateWindow(GUI.ActivateWindow.HOME);
                 action.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
@@ -384,8 +394,8 @@ public class MainActivity extends AppCompatActivity
         moreInfoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Transaction transaction = new Transaction(buttonTypes[14]);
-                Firebase transactionRef = mFirebaseRef.child(uID);
+                ButtonTransaction transaction = new ButtonTransaction(buttonTypes[14]);
+                Firebase transactionRef = mFirebaseButtonRef.child(uID);
                 transactionRef.push().setValue(transaction);
                 /*GUI.ShowNotification notification = new GUI.ShowNotification("Hello", "Woo it works!");
                 notification.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);*/
@@ -402,8 +412,8 @@ public class MainActivity extends AppCompatActivity
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Transaction transaction = new Transaction(descripton);
-                        Firebase transactionRef = mFirebaseRef.child(uID);
+                        ButtonTransaction transaction = new ButtonTransaction(descripton);
+                        Firebase transactionRef = mFirebaseButtonRef.child(uID);
                         transactionRef.push().setValue(transaction);
 
                         action.execute(hostManager.getConnection(), defaultIntActionCallback, callbackHandler);
@@ -416,8 +426,8 @@ public class MainActivity extends AppCompatActivity
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Transaction transaction = new Transaction(description);
-                        Firebase transactionRef = mFirebaseRef.child(uID);
+                        ButtonTransaction transaction = new ButtonTransaction(description);
+                        Firebase transactionRef = mFirebaseButtonRef.child(uID);
                         transactionRef.push().setValue(transaction);
                         action.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
                     }
@@ -434,8 +444,8 @@ public class MainActivity extends AppCompatActivity
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Transaction transaction = new Transaction(description);
-                    Firebase transactionRef = mFirebaseRef.child(uID);
+                    ButtonTransaction transaction = new ButtonTransaction(description);
+                    Firebase transactionRef = mFirebaseButtonRef.child(uID);
                     transactionRef.push().setValue(transaction);
                     UIUtils.handleVibration(MainActivity.this);
                     clickAction.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
@@ -446,8 +456,8 @@ public class MainActivity extends AppCompatActivity
             button.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    Transaction transaction = new Transaction(description);
-                    Firebase transactionRef = mFirebaseRef.child(uID);
+                    ButtonTransaction transaction = new ButtonTransaction(description);
+                    Firebase transactionRef = mFirebaseButtonRef.child(uID);
                     transactionRef.push().setValue(transaction);
                     UIUtils.handleVibration(MainActivity.this);
                     longClickAction.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);
@@ -689,10 +699,26 @@ public class MainActivity extends AppCompatActivity
         videoRef.push().setValue(video);
     }
 
+    public void loadDefaultRemote(){
+        loadButtons();
+        setupButtons();
+        defaultUI.setVisibility(View.VISIBLE);
+        adaptiveUI.setVisibility(View.GONE);
+
+        Date date = new Date();
+        ArrayList<String> buttons = new ArrayList<>();
+        for(int i=0; i < buttonTypes.length; i++){
+            buttons.add(buttonTypes[i]);
+        }
+        LayoutLog log = new LayoutLog("DEFAULT", date.toString(), buttons);
+        Firebase logRef = mFirebaseLayoutRef.child(uID);
+        logRef.push().setValue(log);
+    }
+
     public void updateRemote() {
         final ArrayList<RemoteButtonData> remoteButtonTransactionData = new ArrayList<>();
 
-        Query queryRef = mFirebaseRef.child(uID);
+        Query queryRef = mFirebaseButtonRef.child(uID);
 
         queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -701,7 +727,7 @@ public class MainActivity extends AppCompatActivity
                     remoteButtonTransactionData.add(new RemoteButtonData(buttonTypes[i], 0));
                 }
                 for (DataSnapshot currentDataSnapshot : querySnapshot.getChildren()) {
-                    Transaction current = currentDataSnapshot.getChildren().iterator().next().getValue(Transaction.class);
+                    ButtonTransaction current = currentDataSnapshot.getChildren().iterator().next().getValue(ButtonTransaction.class);
 
                     for(int j = 0; j < remoteButtonTransactionData.size(); j++){
                         if(current.getDescription().equals(remoteButtonTransactionData.get(j).getDescription())){
@@ -748,8 +774,9 @@ public class MainActivity extends AppCompatActivity
         defaultUI.setVisibility(View.GONE);
         adaptiveUI.setVisibility(View.VISIBLE);
 
-        ArrayList<Transaction> list = new ArrayList<>();
+        ArrayList<ButtonTransaction> list = new ArrayList<>();
         ArrayList<ImageButton> buttonsList = new ArrayList<>();
+        ArrayList<String> buttons = new ArrayList<>();
 
         buttonsList.add(button1);
         buttonsList.add(button2);
@@ -768,7 +795,7 @@ public class MainActivity extends AppCompatActivity
         buttonsList.add(button15);
 
         for(int i = 0; i < buttonTypes.length; i++){
-            list.add(new Transaction(buttonTypes[i]));
+            list.add(new ButtonTransaction(buttonTypes[i]));
         }
 
         for(int i = 0; i < sortedList.size(); i++){
@@ -777,166 +804,181 @@ public class MainActivity extends AppCompatActivity
                     buttonsList.get(0).setImageResource(R.drawable.ic_rewind_black_48dp);
                     rewindButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(Transaction item : list){
+                    for(ButtonTransaction item : list){
                         if(item.getDescription().equals("REWIND")){
                             list.remove(item);
                             break;
                         }
                     }
+                    buttons.add("REWIND");
                     break;
                 case "FASTFORWARD":
                     buttonsList.get(0).setImageResource(R.drawable.ic_fast_forward_black_48dp);
                     fastForwardButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(Transaction item : list){
+                    for(ButtonTransaction item : list){
                         if(item.getDescription().equals("FASTFORWARD")){
                             list.remove(item);
                             break;
                         }
                     }
+                    buttons.add("FASTFORWARD");
                     break;
                 case "STOP":
                     buttonsList.get(0).setImageResource(R.drawable.ic_stop_black_48dp);
                     stopButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(Transaction item : list){
+                    for(ButtonTransaction item : list){
                         if(item.getDescription().equals("STOP")){
                             list.remove(item);
                             break;
                         }
                     }
+                    buttons.add("STOP");
                     break;
                 case "PLAYPAUSE":
                     buttonsList.get(0).setImageResource(R.drawable.ic_play_black_48dp);
                     playPauseButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(Transaction item : list){
+                    for(ButtonTransaction item : list){
                         if(item.getDescription().equals("PLAYPAUSE")){
                             list.remove(item);
                             break;
                         }
                     }
+                    buttons.add("PLAYPAUSE");
                     break;
                 case "VOLUMEUP":
                     buttonsList.get(0).setImageResource(R.drawable.ic_volume_high_black_48dp);
                     volumeUpButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(Transaction item : list){
+                    for(ButtonTransaction item : list){
                         if(item.getDescription().equals("VOLUMEUP")){
                             list.remove(item);
                             break;
                         }
                     }
+                    buttons.add("VOLUMEUP");
                     break;
                 case "VOLUMEDOWN":
                     buttonsList.get(0).setImageResource(R.drawable.ic_volume_medium_black_48dp);
                     volumeDownButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(Transaction item : list){
+                    for(ButtonTransaction item : list){
                         if(item.getDescription().equals("VOLUMEDOWN")){
                             list.remove(item);
                             break;
                         }
                     }
+                    buttons.add("VOLUMEDOWN");
                     break;
                 case "UP":
                     buttonsList.get(0).setImageResource(R.drawable.ic_arrow_up_black_48dp);
                     upButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(Transaction item : list){
+                    for(ButtonTransaction item : list){
                         if(item.getDescription().equals("UP")){
                             list.remove(item);
                             break;
                         }
                     }
+                    buttons.add("UP");
                     break;
                 case "DOWN":
                     buttonsList.get(0).setImageResource(R.drawable.ic_arrow_down_black_48dp);
                     downButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(Transaction item : list){
+                    for(ButtonTransaction item : list){
                         if(item.getDescription().equals("DOWN")){
                             list.remove(item);
                             break;
                         }
                     }
+                    buttons.add("DOWN");
                     break;
                 case"LEFT":
                     buttonsList.get(0).setImageResource(R.drawable.ic_arrow_left_black_48dp);
                     leftButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(Transaction item : list){
+                    for(ButtonTransaction item : list){
                         if(item.getDescription().equals("LEFT")){
                             list.remove(item);
                             break;
                         }
                     }
+                    buttons.add("LEFT");
                     break;
                 case "RIGHT":
                     buttonsList.get(0).setImageResource(R.drawable.ic_arrow_right_black_48dp);
                     rightButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(Transaction item : list){
+                    for(ButtonTransaction item : list){
                         if(item.getDescription().equals("RIGHT")){
                             list.remove(item);
                             break;
                         }
                     }
+                    buttons.add("RIGHT");
                     break;
                 case "BACK":
                     buttonsList.get(0).setImageResource(R.drawable.ic_arrow_left_bold_circle_black_48dp);
                     backButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(Transaction item : list){
+                    for(ButtonTransaction item : list){
                         if(item.getDescription().equals("BACK")){
                             list.remove(item);
                             break;
                         }
                     }
+                    buttons.add("BACK");
                     break;
                 case "INFO":
                     buttonsList.get(0).setImageResource(R.drawable.ic_information_black_48dp);
                     infoButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(Transaction item : list){
+                    for(ButtonTransaction item : list){
                         if(item.getDescription().equals("INFO")){
                             list.remove(item);
                             break;
                         }
                     }
+                    buttons.add("INFO");
                     break;
                 case "OK":
                     buttonsList.get(0).setImageResource(R.drawable.ic_checkbox_blank_circle_black_48dp);
                     okButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(Transaction item : list){
+                    for(ButtonTransaction item : list){
                         if(item.getDescription().equals("OK")){
                             list.remove(item);
                             break;
                         }
                     }
+                    buttons.add("OK");
                     break;
                 case "HOME":
                     buttonsList.get(0).setImageResource(R.drawable.ic_home_black_48dp);
                     homeButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(Transaction item : list){
+                    for(ButtonTransaction item : list){
                         if(item.getDescription().equals("HOME")){
                             list.remove(item);
                             break;
                         }
                     }
+                    buttons.add("HOME");
                     break;
                 case "MOREINFO":
                     buttonsList.get(0).setImageResource(R.drawable.ic_window_restore_black_48dp);
                     moreInfoButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(Transaction item : list){
+                    for(ButtonTransaction item : list){
                         if(item.getDescription().equals("MOREINFO")){
                             list.remove(item);
                             break;
                         }
                     }
+                    buttons.add("MOREINFO");
                     break;
             }
         }
@@ -947,80 +989,100 @@ public class MainActivity extends AppCompatActivity
                     buttonsList.get(0).setImageResource(R.drawable.ic_rewind_black_48dp);
                     rewindButton = buttonsList.get(0);
                     buttonsList.remove(0);
+                    buttons.add("REWIND");
                     break;
                 case "FASTFORWARD":
                     buttonsList.get(0).setImageResource(R.drawable.ic_fast_forward_black_48dp);
                     fastForwardButton = buttonsList.get(0);
                     buttonsList.remove(0);
+                    buttons.add("FASTFORWARD");
                     break;
                 case "STOP":
                     buttonsList.get(0).setImageResource(R.drawable.ic_stop_black_48dp);
                     stopButton = buttonsList.get(0);
                     buttonsList.remove(0);
+                    buttons.add("STOP");
                     break;
                 case "PLAYPAUSE":
                     buttonsList.get(0).setImageResource(R.drawable.ic_play_black_48dp);
                     playPauseButton = buttonsList.get(0);
                     buttonsList.remove(0);
+                    buttons.add("PLAYPAUSE");
                     break;
                 case "VOLUMEUP":
                     buttonsList.get(0).setImageResource(R.drawable.ic_volume_high_black_48dp);
                     volumeUpButton = buttonsList.get(0);
                     buttonsList.remove(0);
+                    buttons.add("VOLUMEUP");
                     break;
                 case "VOLUMEDOWN":
                     buttonsList.get(0).setImageResource(R.drawable.ic_volume_medium_black_48dp);
                     volumeDownButton = buttonsList.get(0);
                     buttonsList.remove(0);
+                    buttons.add("VOLUMEDOWN");
                     break;
                 case "UP":
                     buttonsList.get(0).setImageResource(R.drawable.ic_arrow_up_black_48dp);
                     upButton = buttonsList.get(0);
                     buttonsList.remove(0);
+                    buttons.add("UP");
                     break;
                 case "DOWN":
                     buttonsList.get(0).setImageResource(R.drawable.ic_arrow_down_black_48dp);
                     downButton = buttonsList.get(0);
                     buttonsList.remove(0);
+                    buttons.add("DOWN");
                     break;
                 case"LEFT":
                     buttonsList.get(0).setImageResource(R.drawable.ic_arrow_left_black_48dp);
                     leftButton = buttonsList.get(0);
                     buttonsList.remove(0);
+                    buttons.add("LEFT");
                     break;
                 case "RIGHT":
                     buttonsList.get(0).setImageResource(R.drawable.ic_arrow_right_black_48dp);
                     rightButton = buttonsList.get(0);
                     buttonsList.remove(0);
+                    buttons.add("RIGHT");
                     break;
                 case "BACK":
                     buttonsList.get(0).setImageResource(R.drawable.ic_arrow_left_bold_circle_black_48dp);
                     backButton = buttonsList.get(0);
                     buttonsList.remove(0);
+                    buttons.add("BACK");
                     break;
                 case "INFO":
                     buttonsList.get(0).setImageResource(R.drawable.information);
                     infoButton = buttonsList.get(0);
                     buttonsList.remove(0);
+                    buttons.add("INFO");
                     break;
                 case "OK":
                     buttonsList.get(0).setImageResource(R.drawable.ic_checkbox_blank_circle_black_48dp);
                     okButton = buttonsList.get(0);
                     buttonsList.remove(0);
+                    buttons.add("OK");
                     break;
                 case "HOME":
                     buttonsList.get(0).setImageResource(R.drawable.ic_home_black_48dp);
                     homeButton = buttonsList.get(0);
                     buttonsList.remove(0);
+                    buttons.add("HOME");
                     break;
                 case "MOREINFO":
                     buttonsList.get(0).setImageResource(R.drawable.ic_window_restore_black_48dp);
                     moreInfoButton = buttonsList.get(0);
                     buttonsList.remove(0);
+                    buttons.add("MOREINFO");
                     break;
             }
         }
 
         setupButtons();
+
+        Date date = new Date();
+        LayoutLog log = new LayoutLog("ADAPTIVE", date.toString(), buttons);
+        Firebase logRef = mFirebaseLayoutRef.child(uID);
+        logRef.push().setValue(log);
     }
 }

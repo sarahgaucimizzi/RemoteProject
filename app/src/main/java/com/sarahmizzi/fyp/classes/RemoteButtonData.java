@@ -3,7 +3,7 @@ package com.sarahmizzi.fyp.classes;
 /**
  * Created by Sarah on 09-Mar-16.
  */
-public class RemoteButtonData extends Transaction{
+public class RemoteButtonData extends ButtonTransaction {
     int count;
 
     public RemoteButtonData(String description, int count) {

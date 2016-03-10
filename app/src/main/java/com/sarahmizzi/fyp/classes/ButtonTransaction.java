@@ -5,10 +5,10 @@ import com.sarahmizzi.fyp.kodi.jsonrpc.api.Input;
 /**
  * Created by Sarah on 17-Feb-16.
  */
-public class Transaction {
+public class ButtonTransaction {
     String description;
 
-    public Transaction(String description) {
+    public ButtonTransaction(String description) {
         this.description = description;
     }
 
