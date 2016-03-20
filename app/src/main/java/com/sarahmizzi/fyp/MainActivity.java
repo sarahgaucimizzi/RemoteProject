@@ -401,7 +401,7 @@ public class MainActivity extends AppCompatActivity
                 notification.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);*/
 
                 TcpRequest request = new TcpRequest();
-                request.methodName = "CONNECT";
+                request.message = uID;
                 tcpClient.getClient().sendTCP(request);
             }
         });
