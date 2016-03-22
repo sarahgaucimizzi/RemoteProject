@@ -1052,7 +1052,7 @@ public class MainActivity extends AppCompatActivity
                     buttons.add("BACK");
                     break;
                 case "INFO":
-                    buttonsList.get(0).setImageResource(R.drawable.information);
+                    buttonsList.get(0).setImageResource(R.drawable.ic_information_black_48dp);
                     infoButton = buttonsList.get(0);
                     buttonsList.remove(0);
                     buttons.add("INFO");
