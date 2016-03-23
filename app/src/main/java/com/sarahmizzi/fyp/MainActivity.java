@@ -251,12 +251,16 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         hostConnectionObserver.registerPlayerObserver(this, true);
+        if(!tcpClient.getClient().isConnected()) {
+            tcpClient = new TcpClient(mHostPreferences.getString("ADDRESS", "error"));
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         hostConnectionObserver.unregisterPlayerObserver(this);
+        tcpClient.getClient().close();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
