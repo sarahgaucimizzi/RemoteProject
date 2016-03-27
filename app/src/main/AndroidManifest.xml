@@ -19,7 +19,7 @@
         android:name=".Application"
         android:allowBackup="true"
         android:icon="@drawable/ic_remote_white_48dp"
-        android:label="Remote"
+        android:label="FYP"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
@@ -30,19 +30,19 @@
         <activity
             android:name=".ConnectHostActivity"
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_connect_host"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
-        <activity
-            android:name=".LoginActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_login"
+            android:label="FYP"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_login"
+            android:theme="@style/AppTheme.NoActionBar" >
         </activity>
     </application>
 

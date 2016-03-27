@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         // Check if logged in already
         AuthData authData = mFirebaseRef.getAuth();
         if(authData != null){
-            Intent intent = new Intent(LoginActivity.this, ConnectHostActivity.class);
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
@@ -112,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
                 editor.putString("UID", authData.getUid());
                 editor.putString("EMAIL", username.getText().toString());
                 editor.commit();
-                Intent intent = new Intent(LoginActivity.this, ConnectHostActivity.class);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();

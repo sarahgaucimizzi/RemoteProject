@@ -22,6 +22,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -49,6 +52,7 @@ import com.sarahmizzi.fyp.kodi.jsonrpc.api.PlayerType;
 import com.sarahmizzi.fyp.utils.RepeatListener;
 import com.sarahmizzi.fyp.utils.TcpRequest;
 import com.sarahmizzi.fyp.utils.TcpClient;
+import com.sarahmizzi.fyp.utils.TcpResponse;
 import com.sarahmizzi.fyp.utils.UIUtils;
 
 import org.json.JSONException;
@@ -407,6 +411,23 @@ public class MainActivity extends AppCompatActivity
                 TcpRequest request = new TcpRequest();
                 request.message = uID;
                 tcpClient.getClient().sendTCP(request);
+
+                final MaterialDialog materialDialog = new MaterialDialog.Builder(MainActivity.this)
+                        .title("More Information")
+                        .content("Proceed to more information section on the laptop")
+                        .progress(true, 0)
+                        .canceledOnTouchOutside(false)
+                        .build();
+
+                materialDialog.show();
+
+                tcpClient.getClient().addListener(new Listener() {
+                    public void received(Connection connection, Object object) {
+                        if (object instanceof TcpResponse) {
+                            materialDialog.dismiss();
+                        }
+                    }
+                });
             }
         });
     }

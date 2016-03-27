@@ -36,12 +36,12 @@ public class ConnectHostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Firebase ref = new Firebase("https://sweltering-torch-8619.firebaseio.com");
+        //Firebase ref = new Firebase("https://sweltering-torch-8619.firebaseio.com");
 
         // If logged in connect
-        AuthData authData = ref.getAuth();
+        /*AuthData authData = ref.getAuth();*/
         SharedPreferences preferences = getApplicationContext().getSharedPreferences("HOST", MODE_PRIVATE);
-        if(authData != null && preferences.contains("ADDRESS")){
+        if(preferences.contains("ADDRESS")){
             HostInfo hostInfo = new HostInfo(-1, preferences.getString("NAME", "TV"), preferences.getString("ADDRESS", "error"),
                     preferences.getInt("PORT", 8080), preferences.getString("USERNAME", "kodi"), preferences.getString("PASSWORD", "kodi"));
 
@@ -194,7 +194,7 @@ public class ConnectHostActivity extends AppCompatActivity {
                 editor.putString("USERNAME", hostInfo.getUsername());
                 editor.putString("PASSWORD", hostInfo.getPassword());
                 editor.commit();
-                Intent intent = new Intent(ConnectHostActivity.this, MainActivity.class);
+                Intent intent = new Intent(ConnectHostActivity.this, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();
@@ -211,7 +211,7 @@ public class ConnectHostActivity extends AppCompatActivity {
     private void hostConnectionError(int errorCode, String description) {
         //if (!isAdded()) return;
 
-        Log.d(TAG, "An error occurred during connection testint. Message: " + description);
+        Log.d(TAG, "An error occurred during connection test int. Message: " + description);
         switch (errorCode) {
             case ApiException.HTTP_RESPONSE_CODE_UNAUTHORIZED:
                 String username = mUsernameEditText.getText().toString(),
