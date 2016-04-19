@@ -167,6 +167,7 @@ public class MainActivity extends AppCompatActivity
 
         mHostPreferences = getApplicationContext().getSharedPreferences("HOST", MODE_PRIVATE);
         tcpClient = new TcpClient(mHostPreferences.getString("ADDRESS", "error"));
+        tcpClient.getClient().setTimeout(0);
 
         mFirebaseButtonRef = new Firebase("https://sweltering-torch-8619.firebaseio.com/android/button_transactions");
         mFirebaseLayoutRef = new Firebase("https://sweltering-torch-8619.firebaseio.com/android/layout_logs");
@@ -257,6 +258,7 @@ public class MainActivity extends AppCompatActivity
         hostConnectionObserver.registerPlayerObserver(this, true);
         if(!tcpClient.getClient().isConnected()) {
             tcpClient = new TcpClient(mHostPreferences.getString("ADDRESS", "error"));
+            tcpClient.getClient().setTimeout(0);
         }
     }
 
