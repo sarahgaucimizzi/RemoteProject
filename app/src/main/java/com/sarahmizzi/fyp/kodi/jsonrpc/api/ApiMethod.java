@@ -14,6 +14,7 @@ import java.io.IOException;
 
 /**
  * Created by Sarah on 05-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 public abstract class ApiMethod<T> {
     private static final String TAG = ApiMethod.class.getSimpleName();
@@ -45,12 +46,13 @@ public abstract class ApiMethod<T> {
     /**
      * Returns the parameters node of the json request object
      * Creates one if necessary
+     *
      * @return Parameters node
      */
     protected ObjectNode getParametersNode() {
         ObjectNode params;
         if (jsonRequest.has(PARAMS_NODE)) {
-            params = (ObjectNode)jsonRequest.get(PARAMS_NODE);
+            params = (ObjectNode) jsonRequest.get(PARAMS_NODE);
         } else {
             params = objectMapper.createObjectNode();
             jsonRequest.put(PARAMS_NODE, params);
@@ -61,8 +63,9 @@ public abstract class ApiMethod<T> {
 
     /**
      * Adds a parameter to the request
+     *
      * @param parameter Parameter name
-     * @param value Value to add
+     * @param value     Value to add
      */
     protected void addParameterToRequest(String parameter, int value) {
         getParametersNode().put(parameter, value);
@@ -70,8 +73,9 @@ public abstract class ApiMethod<T> {
 
     /**
      * Adds a parameter to the request
+     *
      * @param parameter Parameter name
-     * @param value Value to add
+     * @param value     Value to add
      */
     protected void addParameterToRequest(String parameter, String value) {
         if (value != null)
@@ -81,8 +85,9 @@ public abstract class ApiMethod<T> {
 
     /**
      * Adds a parameter to the request
+     *
      * @param parameter Parameter name
-     * @param value Value to add
+     * @param value     Value to add
      */
     protected void addParameterToRequest(String parameter, Integer value) {
         if (value != null)
@@ -91,8 +96,9 @@ public abstract class ApiMethod<T> {
 
     /**
      * Adds a parameter to the request
+     *
      * @param parameter Parameter name
-     * @param value Value to add
+     * @param value     Value to add
      */
     protected void addParameterToRequest(String parameter, Double value) {
         if (value != null)
@@ -101,8 +107,9 @@ public abstract class ApiMethod<T> {
 
     /**
      * Adds a parameter to the request
+     *
      * @param parameter Parameter name
-     * @param value Value to add
+     * @param value     Value to add
      */
     protected void addParameterToRequest(String parameter, boolean value) {
         getParametersNode().put(parameter, value);
@@ -110,8 +117,9 @@ public abstract class ApiMethod<T> {
 
     /**
      * Adds a parameter to the request
+     *
      * @param parameter Parameter name
-     * @param values Values to add
+     * @param values    Values to add
      */
     protected void addParameterToRequest(String parameter, String[] values) {
         if (values != null) {
@@ -125,8 +133,9 @@ public abstract class ApiMethod<T> {
 
     /**
      * Adds a parameter to the request
+     *
      * @param parameter Parameter name
-     * @param value Value to add
+     * @param value     Value to add
      */
     protected void addParameterToRequest(String parameter, ApiParameter value) {
         if (value != null)
@@ -135,8 +144,9 @@ public abstract class ApiMethod<T> {
 
     /**
      * Adds a parameter to the request
+     *
      * @param parameter Parameter name
-     * @param value Value to add
+     * @param value     Value to add
      */
     protected void addParameterToRequest(String parameter, JsonNode value) {
         if (value != null)
@@ -146,6 +156,7 @@ public abstract class ApiMethod<T> {
     /**
      * Returns the id to identify the current method call.
      * An id is generated for each object that is created.
+     *
      * @return Method call id
      */
     public int getId() {
@@ -154,15 +165,21 @@ public abstract class ApiMethod<T> {
 
     /**
      * Returns the string json representation of the current method.
+     *
      * @return Json string representation of the current method
      */
-    public String toJsonString() { return jsonRequest.toString(); }
+    public String toJsonString() {
+        return jsonRequest.toString();
+    }
 
     /**
      * Returns the json object representation of the current method.
+     *
      * @return JsonObject representation of the current method
      */
-    public ObjectNode toJsonObject() { return jsonRequest; }
+    public ObjectNode toJsonObject() {
+        return jsonRequest;
+    }
 
     /**
      * Calls the method represented by this object on the server.
@@ -170,8 +187,8 @@ public abstract class ApiMethod<T> {
      * on the specified handler.
      *
      * @param hostConnection Host connection on which to call the method
-     * @param callback Callbacks to post the response to
-     * @param handler Handler to invoke callbacks on
+     * @param callback       Callbacks to post the response to
+     * @param handler        Handler to invoke callbacks on
      */
     public void execute(HostConnection hostConnection, ApiCallback<T> callback, Handler handler) {
         if (hostConnection != null) {
@@ -183,6 +200,7 @@ public abstract class ApiMethod<T> {
 
     /**
      * Returns the current method name
+     *
      * @return Current method name
      */
     public abstract String getMethodName();
@@ -195,9 +213,9 @@ public abstract class ApiMethod<T> {
      * @param jsonResult Json response obtained from a call
      * @return Result object of the appropriate type for this api method
      */
-    public T resultFromJson(String jsonResult) throws ApiException{
+    public T resultFromJson(String jsonResult) throws ApiException {
         try {
-            return resultFromJson((ObjectNode)objectMapper.readTree(jsonResult));
+            return resultFromJson((ObjectNode) objectMapper.readTree(jsonResult));
         } catch (JsonProcessingException e) {
             throw new ApiException(ApiException.INVALID_JSON_RESPONSE_FROM_HOST, e);
         } catch (IOException e) {

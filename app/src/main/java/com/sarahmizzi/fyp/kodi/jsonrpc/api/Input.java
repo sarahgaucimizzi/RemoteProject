@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Created by Sarah on 08-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 public class Input {
     /**
@@ -13,7 +14,9 @@ public class Input {
     public static final class ExecuteAction extends ApiMethod<String> {
         public final static String METHOD_NAME = "Input.ExecuteAction";
 
-        /** Available actions */
+        /**
+         * Available actions
+         */
         public final static String LEFT = "left";
         public final static String RIGHT = "right";
         public final static String UP = "up";
@@ -196,7 +199,9 @@ public class Input {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -209,6 +214,7 @@ public class Input {
      */
     public static final class Home extends ApiMethod<String> {
         public final static String METHOD_NAME = "Input.Home";
+
         /**
          * Goes to home window in GUI
          */
@@ -217,7 +223,9 @@ public class Input {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -230,6 +238,7 @@ public class Input {
      */
     public static final class Left extends ApiMethod<String> {
         public final static String METHOD_NAME = "Input.Left";
+
         /**
          * Navigate left in GUI
          */
@@ -238,7 +247,9 @@ public class Input {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -251,6 +262,7 @@ public class Input {
      */
     public static final class Right extends ApiMethod<String> {
         public final static String METHOD_NAME = "Input.Right";
+
         /**
          * Navigate right in GUI
          */
@@ -259,7 +271,9 @@ public class Input {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -272,6 +286,7 @@ public class Input {
      */
     public static final class Up extends ApiMethod<String> {
         public final static String METHOD_NAME = "Input.Up";
+
         /**
          * Navigate up in GUI
          */
@@ -280,7 +295,9 @@ public class Input {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -293,6 +310,7 @@ public class Input {
      */
     public static final class Down extends ApiMethod<String> {
         public final static String METHOD_NAME = "Input.Down";
+
         /**
          * Navigate down in GUI
          */
@@ -301,7 +319,9 @@ public class Input {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -314,6 +334,7 @@ public class Input {
      */
     public static final class Back extends ApiMethod<String> {
         public final static String METHOD_NAME = "Input.Back";
+
         /**
          * Navigate down in GUI
          */
@@ -322,7 +343,9 @@ public class Input {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -335,6 +358,7 @@ public class Input {
      */
     public static final class Select extends ApiMethod<String> {
         public final static String METHOD_NAME = "Input.Select";
+
         /**
          * Select in GUI
          */
@@ -343,7 +367,9 @@ public class Input {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -356,6 +382,7 @@ public class Input {
      */
     public static final class SendText extends ApiMethod<String> {
         public final static String METHOD_NAME = "Input.SendText";
+
         /**
          * Send a generic (unicode) text
          */
@@ -366,7 +393,9 @@ public class Input {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {

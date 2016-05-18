@@ -5,6 +5,7 @@ import com.sarahmizzi.fyp.utils.JsonUtils;
 
 /**
  * Created by Sarah on 05-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 public class ApiException extends Exception {
     public static final int INVALID_JSON_RESPONSE_FROM_HOST = 0;
@@ -27,7 +28,8 @@ public class ApiException extends Exception {
 
     /**
      * Construct exception from other exception
-     * @param code Exception code
+     *
+     * @param code              Exception code
      * @param originalException Original exception
      */
     public ApiException(int code, Exception originalException) {
@@ -37,7 +39,8 @@ public class ApiException extends Exception {
 
     /**
      * Construct exception from JSON response
-     * @param code Exception code
+     *
+     * @param code         Exception code
      * @param jsonResponse Json response, with an Error node
      */
     public ApiException(int code, ObjectNode jsonResponse) {
@@ -49,6 +52,7 @@ public class ApiException extends Exception {
 
     /**
      * Internal code of the exception
+     *
      * @return Code of the exception
      */
     public int getCode() {

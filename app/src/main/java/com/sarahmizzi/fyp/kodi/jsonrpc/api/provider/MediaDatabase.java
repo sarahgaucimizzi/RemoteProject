@@ -9,6 +9,7 @@ import com.sarahmizzi.fyp.connection.HostInfo;
 
 /**
  * Created by Sarah on 09-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 public class MediaDatabase extends SQLiteOpenHelper {
     private static final String TAG = MediaDatabase.class.getSimpleName();
@@ -93,301 +94,301 @@ public class MediaDatabase extends SQLiteOpenHelper {
 
         // Hosts
         db.execSQL("CREATE TABLE " + Tables.HOSTS + "(" +
-                        BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
-                        MediaContract.HostsColumns.NAME + " TEXT, " +
-                        MediaContract.HostsColumns.ADDRESS + " TEXT, " +
-                        MediaContract.HostsColumns.HTTP_PORT + " INTEGER, " +
-                        MediaContract.HostsColumns.USERNAME + " TEXT, " +
-                        MediaContract.HostsColumns.PASSWORD + " TEXT, "
+                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
+                MediaContract.HostsColumns.NAME + " TEXT, " +
+                MediaContract.HostsColumns.ADDRESS + " TEXT, " +
+                MediaContract.HostsColumns.HTTP_PORT + " INTEGER, " +
+                MediaContract.HostsColumns.USERNAME + " TEXT, " +
+                MediaContract.HostsColumns.PASSWORD + " TEXT, "
         );
 
         // Movies
         db.execSQL("CREATE TABLE " + Tables.MOVIES + "(" +
-                        BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
-                        MediaContract.MoviesColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
-                        MediaContract.MoviesColumns.MOVIEID + " INTEGER NOT NULL, " +
-                        MediaContract.MoviesColumns.FANART + " TEXT, " +
-                        MediaContract.MoviesColumns.THUMBNAIL + " TEXT, " +
-                        MediaContract.MoviesColumns.PLAYCOUNT + " INTEGER, " +
-                        MediaContract.MoviesColumns.TITLE + " TEXT, " +
-                        MediaContract.MoviesColumns.FILE + " TEXT, " +
-                        MediaContract.MoviesColumns.PLOT + " TEXT, " +
-                        MediaContract.MoviesColumns.DIRECTOR + " TEXT, " +
-                        MediaContract.MoviesColumns.RUNTIME + " INTEGER, " +
-                        MediaContract.MoviesColumns.AUDIO_CHANNELS + " INTEGER, " +
-                        MediaContract.MoviesColumns.AUDIO_CODEC + " TEXT, " +
-                        MediaContract.MoviesColumns.AUDIO_LANGUAGE + " TEXT, " +
-                        MediaContract.MoviesColumns.SUBTITLES_LANGUAGES + " TEXT, " +
-                        MediaContract.MoviesColumns.VIDEO_ASPECT + " REAL, " +
-                        MediaContract.MoviesColumns.VIDEO_CODEC + " TEXT, " +
-                        MediaContract.MoviesColumns.VIDEO_HEIGHT + " INTEGER, " +
-                        MediaContract.MoviesColumns.VIDEO_WIDTH + " INTEGER, " +
-                        MediaContract.MoviesColumns.COUNTRIES + " TEXT, " +
-                        MediaContract.MoviesColumns.GENRES + " TEXT, " +
-                        MediaContract.MoviesColumns.IMDBNUMBER + " TEXT, " +
-                        MediaContract.MoviesColumns.MPAA + " TEXT, " +
-                        MediaContract.MoviesColumns.RATING + " REAL, " +
-                        MediaContract.MoviesColumns.SET + " TEXT, " +
-                        MediaContract.MoviesColumns.SETID + " INTEGER, " +
-                        MediaContract.MoviesColumns.STUDIOS + " TEXT, " +
-                        MediaContract.MoviesColumns.TAGLINE + " TEXT, " +
-                        MediaContract.MoviesColumns.TOP250 + " INTEGER, " +
-                        MediaContract.MoviesColumns.TRAILER + " TEXT, " +
-                        MediaContract.MoviesColumns.VOTES + " TEXT, " +
-                        MediaContract.MoviesColumns.WRITERS + " TEXT, " +
-                        MediaContract.MoviesColumns.YEAR + " INTEGER, " +
-                        MediaContract.MoviesColumns.DATEADDED + " TEXT, " +
-                        "UNIQUE (" + MediaContract.MoviesColumns.HOST_ID + ", " + MediaContract.MoviesColumns.MOVIEID + ") ON CONFLICT REPLACE)"
+                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
+                MediaContract.MoviesColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
+                MediaContract.MoviesColumns.MOVIEID + " INTEGER NOT NULL, " +
+                MediaContract.MoviesColumns.FANART + " TEXT, " +
+                MediaContract.MoviesColumns.THUMBNAIL + " TEXT, " +
+                MediaContract.MoviesColumns.PLAYCOUNT + " INTEGER, " +
+                MediaContract.MoviesColumns.TITLE + " TEXT, " +
+                MediaContract.MoviesColumns.FILE + " TEXT, " +
+                MediaContract.MoviesColumns.PLOT + " TEXT, " +
+                MediaContract.MoviesColumns.DIRECTOR + " TEXT, " +
+                MediaContract.MoviesColumns.RUNTIME + " INTEGER, " +
+                MediaContract.MoviesColumns.AUDIO_CHANNELS + " INTEGER, " +
+                MediaContract.MoviesColumns.AUDIO_CODEC + " TEXT, " +
+                MediaContract.MoviesColumns.AUDIO_LANGUAGE + " TEXT, " +
+                MediaContract.MoviesColumns.SUBTITLES_LANGUAGES + " TEXT, " +
+                MediaContract.MoviesColumns.VIDEO_ASPECT + " REAL, " +
+                MediaContract.MoviesColumns.VIDEO_CODEC + " TEXT, " +
+                MediaContract.MoviesColumns.VIDEO_HEIGHT + " INTEGER, " +
+                MediaContract.MoviesColumns.VIDEO_WIDTH + " INTEGER, " +
+                MediaContract.MoviesColumns.COUNTRIES + " TEXT, " +
+                MediaContract.MoviesColumns.GENRES + " TEXT, " +
+                MediaContract.MoviesColumns.IMDBNUMBER + " TEXT, " +
+                MediaContract.MoviesColumns.MPAA + " TEXT, " +
+                MediaContract.MoviesColumns.RATING + " REAL, " +
+                MediaContract.MoviesColumns.SET + " TEXT, " +
+                MediaContract.MoviesColumns.SETID + " INTEGER, " +
+                MediaContract.MoviesColumns.STUDIOS + " TEXT, " +
+                MediaContract.MoviesColumns.TAGLINE + " TEXT, " +
+                MediaContract.MoviesColumns.TOP250 + " INTEGER, " +
+                MediaContract.MoviesColumns.TRAILER + " TEXT, " +
+                MediaContract.MoviesColumns.VOTES + " TEXT, " +
+                MediaContract.MoviesColumns.WRITERS + " TEXT, " +
+                MediaContract.MoviesColumns.YEAR + " INTEGER, " +
+                MediaContract.MoviesColumns.DATEADDED + " TEXT, " +
+                "UNIQUE (" + MediaContract.MoviesColumns.HOST_ID + ", " + MediaContract.MoviesColumns.MOVIEID + ") ON CONFLICT REPLACE)"
         );
 
         // Movie Cast
         db.execSQL("CREATE TABLE " + Tables.MOVIE_CAST + "(" +
-                        BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
-                        MediaContract.MovieCastColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
-                        MediaContract.MovieCastColumns.MOVIEID + " INTEGER NOT NULL, " +
-                        MediaContract.MovieCastColumns.NAME + " TEXT, " +
-                        MediaContract.MovieCastColumns.ORDER + " INTEGER, " +
-                        MediaContract.MovieCastColumns.ROLE + " TEXT, " +
-                        MediaContract.MovieCastColumns.THUMBNAIL + " TEXT, " +
-                        "UNIQUE (" +
-                        MediaContract.MovieCastColumns.HOST_ID + ", " +
-                        MediaContract.MovieCastColumns.MOVIEID + ", " +
-                        MediaContract.MovieCastColumns.NAME +
-                        ") ON CONFLICT REPLACE)"
+                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
+                MediaContract.MovieCastColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
+                MediaContract.MovieCastColumns.MOVIEID + " INTEGER NOT NULL, " +
+                MediaContract.MovieCastColumns.NAME + " TEXT, " +
+                MediaContract.MovieCastColumns.ORDER + " INTEGER, " +
+                MediaContract.MovieCastColumns.ROLE + " TEXT, " +
+                MediaContract.MovieCastColumns.THUMBNAIL + " TEXT, " +
+                "UNIQUE (" +
+                MediaContract.MovieCastColumns.HOST_ID + ", " +
+                MediaContract.MovieCastColumns.MOVIEID + ", " +
+                MediaContract.MovieCastColumns.NAME +
+                ") ON CONFLICT REPLACE)"
         );
 
         // TVShows
         db.execSQL("CREATE TABLE " + Tables.TVSHOWS + "(" +
-                        BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
-                        MediaContract.TVShowsColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
-                        MediaContract.TVShowsColumns.TVSHOWID + " INTEGER NOT NULL, " +
-                        MediaContract.TVShowsColumns.FANART + " TEXT, " +
-                        MediaContract.TVShowsColumns.THUMBNAIL + " TEXT, " +
-                        MediaContract.TVShowsColumns.PLAYCOUNT + " INTEGER, " +
-                        MediaContract.TVShowsColumns.TITLE + " TEXT, " +
-                        MediaContract.TVShowsColumns.DATEADDED + " TEXT, " +
-                        MediaContract.TVShowsColumns.FILE + " TEXT, " +
-                        MediaContract.TVShowsColumns.PLOT + " TEXT, " +
-                        MediaContract.TVShowsColumns.EPISODE + " INTEGER, " +
-                        MediaContract.TVShowsColumns.IMDBNUMBER + " TEXT, " +
-                        MediaContract.TVShowsColumns.MPAA + " TEXT, " +
-                        MediaContract.TVShowsColumns.PREMIERED + " TEXT, " +
-                        MediaContract.TVShowsColumns.RATING + " REAL, " +
-                        MediaContract.TVShowsColumns.STUDIO + " TEXT, " +
-                        MediaContract.TVShowsColumns.WATCHEDEPISODES + " INTEGER, " +
-                        MediaContract.MoviesColumns.GENRES + " TEXT, " +
-                        "UNIQUE (" +
-                        MediaContract.TVShowsColumns.HOST_ID + ", " +
-                        MediaContract.TVShowsColumns.TVSHOWID +
-                        ") ON CONFLICT REPLACE)"
+                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
+                MediaContract.TVShowsColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
+                MediaContract.TVShowsColumns.TVSHOWID + " INTEGER NOT NULL, " +
+                MediaContract.TVShowsColumns.FANART + " TEXT, " +
+                MediaContract.TVShowsColumns.THUMBNAIL + " TEXT, " +
+                MediaContract.TVShowsColumns.PLAYCOUNT + " INTEGER, " +
+                MediaContract.TVShowsColumns.TITLE + " TEXT, " +
+                MediaContract.TVShowsColumns.DATEADDED + " TEXT, " +
+                MediaContract.TVShowsColumns.FILE + " TEXT, " +
+                MediaContract.TVShowsColumns.PLOT + " TEXT, " +
+                MediaContract.TVShowsColumns.EPISODE + " INTEGER, " +
+                MediaContract.TVShowsColumns.IMDBNUMBER + " TEXT, " +
+                MediaContract.TVShowsColumns.MPAA + " TEXT, " +
+                MediaContract.TVShowsColumns.PREMIERED + " TEXT, " +
+                MediaContract.TVShowsColumns.RATING + " REAL, " +
+                MediaContract.TVShowsColumns.STUDIO + " TEXT, " +
+                MediaContract.TVShowsColumns.WATCHEDEPISODES + " INTEGER, " +
+                MediaContract.MoviesColumns.GENRES + " TEXT, " +
+                "UNIQUE (" +
+                MediaContract.TVShowsColumns.HOST_ID + ", " +
+                MediaContract.TVShowsColumns.TVSHOWID +
+                ") ON CONFLICT REPLACE)"
         );
 
         // TVShows Cast
         db.execSQL("CREATE TABLE " + Tables.TVSHOWS_CAST + "(" +
-                        BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
-                        MediaContract.TVShowCastColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
-                        MediaContract.TVShowCastColumns.TVSHOWID + " INTEGER NOT NULL, " +
-                        MediaContract.TVShowCastColumns.NAME + " TEXT, " +
-                        MediaContract.TVShowCastColumns.ORDER + " INTEGER, " +
-                        MediaContract.TVShowCastColumns.ROLE + " TEXT, " +
-                        MediaContract.TVShowCastColumns.THUMBNAIL + " TEXT, " +
-                        "UNIQUE (" +
-                        MediaContract.TVShowCastColumns.HOST_ID + ", " +
-                        MediaContract.TVShowCastColumns.TVSHOWID + ", " +
-                        MediaContract.TVShowCastColumns.NAME +
-                        ") ON CONFLICT REPLACE)"
+                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
+                MediaContract.TVShowCastColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
+                MediaContract.TVShowCastColumns.TVSHOWID + " INTEGER NOT NULL, " +
+                MediaContract.TVShowCastColumns.NAME + " TEXT, " +
+                MediaContract.TVShowCastColumns.ORDER + " INTEGER, " +
+                MediaContract.TVShowCastColumns.ROLE + " TEXT, " +
+                MediaContract.TVShowCastColumns.THUMBNAIL + " TEXT, " +
+                "UNIQUE (" +
+                MediaContract.TVShowCastColumns.HOST_ID + ", " +
+                MediaContract.TVShowCastColumns.TVSHOWID + ", " +
+                MediaContract.TVShowCastColumns.NAME +
+                ") ON CONFLICT REPLACE)"
         );
 
         // Seasons
         db.execSQL("CREATE TABLE " + Tables.SEASONS + "(" +
-                        BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
-                        MediaContract.SeasonsColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
-                        MediaContract.SeasonsColumns.TVSHOWID + " INTEGER NOT NULL, " +
-                        MediaContract.SeasonsColumns.SEASON + " INTEGER NOT NULL, " +
-                        MediaContract.SeasonsColumns.LABEL + " TEXT, " +
-                        MediaContract.SeasonsColumns.FANART + " TEXT, " +
-                        MediaContract.SeasonsColumns.THUMBNAIL + " TEXT, " +
-                        MediaContract.SeasonsColumns.EPISODE + " INTEGER, " +
-                        MediaContract.SeasonsColumns.SHOWTITLE + " TEXT, " +
-                        MediaContract.SeasonsColumns.WATCHEDEPISODES + " INTEGER, " +
-                        "UNIQUE (" +
-                        MediaContract.SeasonsColumns.HOST_ID + ", " +
-                        MediaContract.SeasonsColumns.TVSHOWID + ", " +
-                        MediaContract.SeasonsColumns.SEASON +
-                        ") ON CONFLICT REPLACE)"
+                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
+                MediaContract.SeasonsColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
+                MediaContract.SeasonsColumns.TVSHOWID + " INTEGER NOT NULL, " +
+                MediaContract.SeasonsColumns.SEASON + " INTEGER NOT NULL, " +
+                MediaContract.SeasonsColumns.LABEL + " TEXT, " +
+                MediaContract.SeasonsColumns.FANART + " TEXT, " +
+                MediaContract.SeasonsColumns.THUMBNAIL + " TEXT, " +
+                MediaContract.SeasonsColumns.EPISODE + " INTEGER, " +
+                MediaContract.SeasonsColumns.SHOWTITLE + " TEXT, " +
+                MediaContract.SeasonsColumns.WATCHEDEPISODES + " INTEGER, " +
+                "UNIQUE (" +
+                MediaContract.SeasonsColumns.HOST_ID + ", " +
+                MediaContract.SeasonsColumns.TVSHOWID + ", " +
+                MediaContract.SeasonsColumns.SEASON +
+                ") ON CONFLICT REPLACE)"
         );
 
         // Episodes
         db.execSQL("CREATE TABLE " + Tables.EPISODES + "(" +
-                        BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
-                        MediaContract.EpisodesColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
-                        MediaContract.EpisodesColumns.EPISODEID + " INTEGER NOT NULL, " +
-                        MediaContract.SeasonsColumns.TVSHOWID + " INTEGER NOT NULL, " +
-                        MediaContract.SeasonsColumns.SEASON + " INTEGER NOT NULL, " +
-                        MediaContract.SeasonsColumns.EPISODE + " INTEGER NOT NULL, " +
-                        MediaContract.EpisodesColumns.FANART + " TEXT, " +
-                        MediaContract.EpisodesColumns.THUMBNAIL + " TEXT, " +
-                        MediaContract.EpisodesColumns.PLAYCOUNT + " INTEGER, " +
-                        MediaContract.EpisodesColumns.TITLE + " TEXT, " +
-                        MediaContract.EpisodesColumns.DATEADDED + " TEXT, " +
-                        MediaContract.EpisodesColumns.FILE + " TEXT, " +
-                        MediaContract.EpisodesColumns.PLOT + " TEXT, " +
-                        MediaContract.EpisodesColumns.DIRECTOR + " TEXT, " +
-                        MediaContract.EpisodesColumns.RUNTIME + " INTEGER, " +
-                        MediaContract.EpisodesColumns.FIRSTAIRED + " TEXT, " +
-                        MediaContract.EpisodesColumns.RATING + " REAL, " +
-                        MediaContract.EpisodesColumns.SHOWTITLE + " TEXT, " +
-                        MediaContract.EpisodesColumns.WRITER + " TEXT, " +
-                        MediaContract.EpisodesColumns.AUDIO_CHANNELS + " INTEGER, " +
-                        MediaContract.EpisodesColumns.AUDIO_CODEC + " TEXT, " +
-                        MediaContract.EpisodesColumns.AUDIO_LANGUAGE + " TEXT, " +
-                        MediaContract.EpisodesColumns.SUBTITLES_LANGUAGES + " TEXT, " +
-                        MediaContract.EpisodesColumns.VIDEO_ASPECT + " REAL, " +
-                        MediaContract.EpisodesColumns.VIDEO_CODEC + " TEXT, " +
-                        MediaContract.EpisodesColumns.VIDEO_HEIGHT + " INTEGER, " +
-                        MediaContract.EpisodesColumns.VIDEO_WIDTH + " INTEGER, " +
-                        "UNIQUE (" +
-                        MediaContract.EpisodesColumns.HOST_ID + ", " +
-                        MediaContract.EpisodesColumns.EPISODEID +
-                        ") ON CONFLICT REPLACE)"
+                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
+                MediaContract.EpisodesColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
+                MediaContract.EpisodesColumns.EPISODEID + " INTEGER NOT NULL, " +
+                MediaContract.SeasonsColumns.TVSHOWID + " INTEGER NOT NULL, " +
+                MediaContract.SeasonsColumns.SEASON + " INTEGER NOT NULL, " +
+                MediaContract.SeasonsColumns.EPISODE + " INTEGER NOT NULL, " +
+                MediaContract.EpisodesColumns.FANART + " TEXT, " +
+                MediaContract.EpisodesColumns.THUMBNAIL + " TEXT, " +
+                MediaContract.EpisodesColumns.PLAYCOUNT + " INTEGER, " +
+                MediaContract.EpisodesColumns.TITLE + " TEXT, " +
+                MediaContract.EpisodesColumns.DATEADDED + " TEXT, " +
+                MediaContract.EpisodesColumns.FILE + " TEXT, " +
+                MediaContract.EpisodesColumns.PLOT + " TEXT, " +
+                MediaContract.EpisodesColumns.DIRECTOR + " TEXT, " +
+                MediaContract.EpisodesColumns.RUNTIME + " INTEGER, " +
+                MediaContract.EpisodesColumns.FIRSTAIRED + " TEXT, " +
+                MediaContract.EpisodesColumns.RATING + " REAL, " +
+                MediaContract.EpisodesColumns.SHOWTITLE + " TEXT, " +
+                MediaContract.EpisodesColumns.WRITER + " TEXT, " +
+                MediaContract.EpisodesColumns.AUDIO_CHANNELS + " INTEGER, " +
+                MediaContract.EpisodesColumns.AUDIO_CODEC + " TEXT, " +
+                MediaContract.EpisodesColumns.AUDIO_LANGUAGE + " TEXT, " +
+                MediaContract.EpisodesColumns.SUBTITLES_LANGUAGES + " TEXT, " +
+                MediaContract.EpisodesColumns.VIDEO_ASPECT + " REAL, " +
+                MediaContract.EpisodesColumns.VIDEO_CODEC + " TEXT, " +
+                MediaContract.EpisodesColumns.VIDEO_HEIGHT + " INTEGER, " +
+                MediaContract.EpisodesColumns.VIDEO_WIDTH + " INTEGER, " +
+                "UNIQUE (" +
+                MediaContract.EpisodesColumns.HOST_ID + ", " +
+                MediaContract.EpisodesColumns.EPISODEID +
+                ") ON CONFLICT REPLACE)"
         );
 
         // Artists
         db.execSQL("CREATE TABLE " + Tables.ARTISTS + "(" +
-                        BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
-                        MediaContract.ArtistsColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
-                        MediaContract.ArtistsColumns.ARTISTID + " INTEGER NOT NULL, " +
-                        MediaContract.ArtistsColumns.ARTIST + " TEXT, " +
-                        MediaContract.ArtistsColumns.DESCRIPTION + " TEXT, " +
-                        MediaContract.ArtistsColumns.GENRE + " TEXT, " +
-                        MediaContract.ArtistsColumns.FANART + " TEXT, " +
-                        MediaContract.ArtistsColumns.THUMBNAIL + " TEXT, " +
-                        "UNIQUE (" +
-                        MediaContract.ArtistsColumns.HOST_ID + ", " +
-                        MediaContract.ArtistsColumns.ARTISTID +
-                        ") ON CONFLICT REPLACE)"
+                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
+                MediaContract.ArtistsColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
+                MediaContract.ArtistsColumns.ARTISTID + " INTEGER NOT NULL, " +
+                MediaContract.ArtistsColumns.ARTIST + " TEXT, " +
+                MediaContract.ArtistsColumns.DESCRIPTION + " TEXT, " +
+                MediaContract.ArtistsColumns.GENRE + " TEXT, " +
+                MediaContract.ArtistsColumns.FANART + " TEXT, " +
+                MediaContract.ArtistsColumns.THUMBNAIL + " TEXT, " +
+                "UNIQUE (" +
+                MediaContract.ArtistsColumns.HOST_ID + ", " +
+                MediaContract.ArtistsColumns.ARTISTID +
+                ") ON CONFLICT REPLACE)"
         );
 
         // Albums
         db.execSQL("CREATE TABLE " + Tables.ALBUMS + "(" +
-                        BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
-                        MediaContract.AlbumsColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
-                        MediaContract.AlbumsColumns.ALBUMID + " INTEGER NOT NULL, " +
-                        MediaContract.AlbumsColumns.FANART + " TEXT, " +
-                        MediaContract.AlbumsColumns.THUMBNAIL + " TEXT, " +
-                        MediaContract.AlbumsColumns.DISPLAYARTIST + " TEXT, " +
-                        MediaContract.AlbumsColumns.RATING + " INTEGER, " +
-                        MediaContract.AlbumsColumns.TITLE + " TEXT, " +
-                        MediaContract.AlbumsColumns.YEAR + " INTEGER, " +
-                        MediaContract.AlbumsColumns.ALBUMLABEL + " TEXT, " +
-                        MediaContract.AlbumsColumns.DESCRIPTION + " TEXT, " +
-                        MediaContract.AlbumsColumns.PLAYCOUNT + " INTEGER, " +
-                        MediaContract.AlbumsColumns.GENRE + " TEXT, " +
-                        "UNIQUE (" +
-                        MediaContract.AlbumsColumns.HOST_ID + ", " +
-                        MediaContract.AlbumsColumns.ALBUMID +
-                        ") ON CONFLICT REPLACE)"
+                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
+                MediaContract.AlbumsColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
+                MediaContract.AlbumsColumns.ALBUMID + " INTEGER NOT NULL, " +
+                MediaContract.AlbumsColumns.FANART + " TEXT, " +
+                MediaContract.AlbumsColumns.THUMBNAIL + " TEXT, " +
+                MediaContract.AlbumsColumns.DISPLAYARTIST + " TEXT, " +
+                MediaContract.AlbumsColumns.RATING + " INTEGER, " +
+                MediaContract.AlbumsColumns.TITLE + " TEXT, " +
+                MediaContract.AlbumsColumns.YEAR + " INTEGER, " +
+                MediaContract.AlbumsColumns.ALBUMLABEL + " TEXT, " +
+                MediaContract.AlbumsColumns.DESCRIPTION + " TEXT, " +
+                MediaContract.AlbumsColumns.PLAYCOUNT + " INTEGER, " +
+                MediaContract.AlbumsColumns.GENRE + " TEXT, " +
+                "UNIQUE (" +
+                MediaContract.AlbumsColumns.HOST_ID + ", " +
+                MediaContract.AlbumsColumns.ALBUMID +
+                ") ON CONFLICT REPLACE)"
         );
 
         // Songs
         db.execSQL("CREATE TABLE " + Tables.SONGS + "(" +
-                        BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
-                        MediaContract.SongsColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
-                        MediaContract.SongsColumns.ALBUMID + " INTEGER NOT NULL, " +
-                        MediaContract.SongsColumns.SONGID + " INTEGER NOT NULL, " +
-                        MediaContract.SongsColumns.DURATION + " INTEGER, " +
-                        MediaContract.SongsColumns.THUMBNAIL + " TEXT, " +
-                        MediaContract.SongsColumns.FILE + " TEXT, " +
-                        MediaContract.SongsColumns.TRACK + " INTEGER, " +
-                        MediaContract.SongsColumns.TITLE + " TEXT, " +
-                        "UNIQUE (" +
-                        MediaContract.SongsColumns.HOST_ID + ", " +
-                        MediaContract.SongsColumns.ALBUMID + ", " +
-                        MediaContract.SongsColumns.SONGID +
-                        ") ON CONFLICT REPLACE)"
+                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
+                MediaContract.SongsColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
+                MediaContract.SongsColumns.ALBUMID + " INTEGER NOT NULL, " +
+                MediaContract.SongsColumns.SONGID + " INTEGER NOT NULL, " +
+                MediaContract.SongsColumns.DURATION + " INTEGER, " +
+                MediaContract.SongsColumns.THUMBNAIL + " TEXT, " +
+                MediaContract.SongsColumns.FILE + " TEXT, " +
+                MediaContract.SongsColumns.TRACK + " INTEGER, " +
+                MediaContract.SongsColumns.TITLE + " TEXT, " +
+                "UNIQUE (" +
+                MediaContract.SongsColumns.HOST_ID + ", " +
+                MediaContract.SongsColumns.ALBUMID + ", " +
+                MediaContract.SongsColumns.SONGID +
+                ") ON CONFLICT REPLACE)"
         );
 
         // AudioGenres
         db.execSQL("CREATE TABLE " + Tables.AUDIO_GENRES + "(" +
-                        BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
-                        MediaContract.AudioGenresColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
-                        MediaContract.AudioGenresColumns.GENREID + " INTEGER NOT NULL, " +
-                        MediaContract.AudioGenresColumns.THUMBNAIL + " TEXT, " +
-                        MediaContract.AudioGenresColumns.TITLE + " TEXT, " +
-                        "UNIQUE (" +
-                        MediaContract.AudioGenresColumns.HOST_ID + ", " +
-                        MediaContract.AudioGenresColumns.GENREID +
-                        ") ON CONFLICT REPLACE)"
+                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
+                MediaContract.AudioGenresColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
+                MediaContract.AudioGenresColumns.GENREID + " INTEGER NOT NULL, " +
+                MediaContract.AudioGenresColumns.THUMBNAIL + " TEXT, " +
+                MediaContract.AudioGenresColumns.TITLE + " TEXT, " +
+                "UNIQUE (" +
+                MediaContract.AudioGenresColumns.HOST_ID + ", " +
+                MediaContract.AudioGenresColumns.GENREID +
+                ") ON CONFLICT REPLACE)"
         );
 
         // AlbumArtists
         db.execSQL("CREATE TABLE " + Tables.ALBUM_ARTISTS + "(" +
-                        BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        MediaContract.AlbumArtistsColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
-                        MediaContract.AlbumArtistsColumns.ALBUMID + " INTEGER NOT NULL " + References.ALBUMID + ", " +
-                        MediaContract.AlbumArtistsColumns.ARTISTID + " INTEGER NOT NULL " + References .ARTISTID + ", " +
-                        "UNIQUE (" +
-                        MediaContract.AlbumArtistsColumns.HOST_ID + ", " +
-                        MediaContract.AlbumArtistsColumns.ALBUMID + ", " +
-                        MediaContract.AlbumArtistsColumns.ARTISTID +
-                        ") ON CONFLICT REPLACE)"
+                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MediaContract.AlbumArtistsColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
+                MediaContract.AlbumArtistsColumns.ALBUMID + " INTEGER NOT NULL " + References.ALBUMID + ", " +
+                MediaContract.AlbumArtistsColumns.ARTISTID + " INTEGER NOT NULL " + References.ARTISTID + ", " +
+                "UNIQUE (" +
+                MediaContract.AlbumArtistsColumns.HOST_ID + ", " +
+                MediaContract.AlbumArtistsColumns.ALBUMID + ", " +
+                MediaContract.AlbumArtistsColumns.ARTISTID +
+                ") ON CONFLICT REPLACE)"
         );
 
         // AlbumGenres
         db.execSQL("CREATE TABLE " + Tables.ALBUM_GENRES + "(" +
-                        BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        MediaContract.AlbumGenresColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
-                        MediaContract.AlbumGenresColumns.ALBUMID + " INTEGER NOT NULL " + References.ALBUMID + ", " +
-                        MediaContract.AlbumGenresColumns.GENREID + " INTEGER NOT NULL " + References .GENREID + ", " +
-                        "UNIQUE (" +
-                        MediaContract.AlbumGenresColumns.HOST_ID + ", " +
-                        MediaContract.AlbumGenresColumns.ALBUMID + ", " +
-                        MediaContract.AlbumGenresColumns.GENREID +
-                        ") ON CONFLICT REPLACE)"
+                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MediaContract.AlbumGenresColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
+                MediaContract.AlbumGenresColumns.ALBUMID + " INTEGER NOT NULL " + References.ALBUMID + ", " +
+                MediaContract.AlbumGenresColumns.GENREID + " INTEGER NOT NULL " + References.GENREID + ", " +
+                "UNIQUE (" +
+                MediaContract.AlbumGenresColumns.HOST_ID + ", " +
+                MediaContract.AlbumGenresColumns.ALBUMID + ", " +
+                MediaContract.AlbumGenresColumns.GENREID +
+                ") ON CONFLICT REPLACE)"
         );
 
         // Music videos
         db.execSQL("CREATE TABLE " + Tables.MUSIC_VIDEOS + "(" +
-                        BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
-                        MediaContract.MusicVideosColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
-                        MediaContract.MusicVideosColumns.MUSICVIDEOID + " INTEGER NOT NULL, " +
-                        MediaContract.MusicVideosColumns.FANART + " TEXT, " +
-                        MediaContract.MusicVideosColumns.THUMBNAIL + " TEXT, " +
-                        MediaContract.MusicVideosColumns.PLAYCOUNT + " INTEGER, " +
-                        MediaContract.MusicVideosColumns.TITLE + " TEXT, " +
-                        MediaContract.MusicVideosColumns.FILE + " TEXT, " +
-                        MediaContract.MusicVideosColumns.PLOT + " TEXT, " +
-                        MediaContract.MusicVideosColumns.DIRECTOR + " TEXT, " +
-                        MediaContract.MusicVideosColumns.RUNTIME + " INTEGER, " +
-                        MediaContract.MusicVideosColumns.AUDIO_CHANNELS + " INTEGER, " +
-                        MediaContract.MusicVideosColumns.AUDIO_CODEC + " TEXT, " +
-                        MediaContract.MusicVideosColumns.AUDIO_LANGUAGE + " TEXT, " +
-                        MediaContract.MusicVideosColumns.SUBTITLES_LANGUAGES + " TEXT, " +
-                        MediaContract.MusicVideosColumns.VIDEO_ASPECT + " REAL, " +
-                        MediaContract.MusicVideosColumns.VIDEO_CODEC + " TEXT, " +
-                        MediaContract.MusicVideosColumns.VIDEO_HEIGHT + " INTEGER, " +
-                        MediaContract.MusicVideosColumns.VIDEO_WIDTH + " INTEGER, " +
-                        MediaContract.MusicVideosColumns.ALBUM + " TEXT, " +
-                        MediaContract.MusicVideosColumns.ARTIST + " TEXT, " +
-                        MediaContract.MusicVideosColumns.GENRES + " TEXT, " +
-                        MediaContract.MusicVideosColumns.STUDIOS + " TEXT, " +
-                        MediaContract.MusicVideosColumns.TAG + " TEXT, " +
-                        MediaContract.MusicVideosColumns.TRACK + " INTEGER, " +
-                        MediaContract.MusicVideosColumns.YEAR + " INTEGER, " +
-                        "UNIQUE (" + MediaContract.MusicVideosColumns.HOST_ID + ", " +
-                        "" + MediaContract.MusicVideosColumns.MUSICVIDEOID + ") ON CONFLICT REPLACE)"
+                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MediaContract.SyncColumns.UPDATED + " INTEGER NOT NULL," +
+                MediaContract.MusicVideosColumns.HOST_ID + " INTEGER NOT NULL " + References.HOST_ID + ", " +
+                MediaContract.MusicVideosColumns.MUSICVIDEOID + " INTEGER NOT NULL, " +
+                MediaContract.MusicVideosColumns.FANART + " TEXT, " +
+                MediaContract.MusicVideosColumns.THUMBNAIL + " TEXT, " +
+                MediaContract.MusicVideosColumns.PLAYCOUNT + " INTEGER, " +
+                MediaContract.MusicVideosColumns.TITLE + " TEXT, " +
+                MediaContract.MusicVideosColumns.FILE + " TEXT, " +
+                MediaContract.MusicVideosColumns.PLOT + " TEXT, " +
+                MediaContract.MusicVideosColumns.DIRECTOR + " TEXT, " +
+                MediaContract.MusicVideosColumns.RUNTIME + " INTEGER, " +
+                MediaContract.MusicVideosColumns.AUDIO_CHANNELS + " INTEGER, " +
+                MediaContract.MusicVideosColumns.AUDIO_CODEC + " TEXT, " +
+                MediaContract.MusicVideosColumns.AUDIO_LANGUAGE + " TEXT, " +
+                MediaContract.MusicVideosColumns.SUBTITLES_LANGUAGES + " TEXT, " +
+                MediaContract.MusicVideosColumns.VIDEO_ASPECT + " REAL, " +
+                MediaContract.MusicVideosColumns.VIDEO_CODEC + " TEXT, " +
+                MediaContract.MusicVideosColumns.VIDEO_HEIGHT + " INTEGER, " +
+                MediaContract.MusicVideosColumns.VIDEO_WIDTH + " INTEGER, " +
+                MediaContract.MusicVideosColumns.ALBUM + " TEXT, " +
+                MediaContract.MusicVideosColumns.ARTIST + " TEXT, " +
+                MediaContract.MusicVideosColumns.GENRES + " TEXT, " +
+                MediaContract.MusicVideosColumns.STUDIOS + " TEXT, " +
+                MediaContract.MusicVideosColumns.TAG + " TEXT, " +
+                MediaContract.MusicVideosColumns.TRACK + " INTEGER, " +
+                MediaContract.MusicVideosColumns.YEAR + " INTEGER, " +
+                "UNIQUE (" + MediaContract.MusicVideosColumns.HOST_ID + ", " +
+                "" + MediaContract.MusicVideosColumns.MUSICVIDEOID + ") ON CONFLICT REPLACE)"
         );
 
 
@@ -453,25 +454,25 @@ public class MediaDatabase extends SQLiteOpenHelper {
 
     /**
      * Tokens to move from prefix to suffix when sorting titles
-     *
+     * <p>
      * TODO: Extract from host's advancedsettings.xml - sortTokens if available via JSONAPI
      */
     private static String[] commonTokens = {"The", /* "An", "A" */};
 
     /**
      * Given column create SQLite column expression to convert any sortTokens prefixes to suffixes
-     *
+     * <p>
      * eg.column = "title", commonTokens = {"The", "An", "A"};
-     *
-     *      (
-     *          CASE
-     *              WHEN title LIKE 'The %' THEN SUBSTR(title,5) || ', The'
-     *              WHEN title LIKE 'An %'  THEN SUBSTR(title,4) || ', An'
-     *              WHEN title LIKE 'A %'   THEN SUBSTR(title,3) || ', A'
-     *              ELSE title
-     *          END
-     *      )
-     *
+     * <p>
+     * (
+     * CASE
+     * WHEN title LIKE 'The %' THEN SUBSTR(title,5) || ', The'
+     * WHEN title LIKE 'An %'  THEN SUBSTR(title,4) || ', An'
+     * WHEN title LIKE 'A %'   THEN SUBSTR(title,3) || ', A'
+     * ELSE title
+     * END
+     * )
+     * <p>
      * This allows it to be used in SQL where a column expression is expected ( SELECT, ORDER BY )
      */
     public static String sortCommonTokens(String column) {
@@ -480,7 +481,7 @@ public class MediaDatabase extends SQLiteOpenHelper {
         order.append(" (CASE ");
 
         // Create WHEN for each token, eg 'The Dog' would become 'Dog, The'
-        for (String token: commonTokens) {
+        for (String token : commonTokens) {
             order.append(
                     " WHEN " + column + " LIKE '" + token + " %'" +
                             " THEN SUBSTR(" + column + "," + String.valueOf(token.length() + 2) + ")" +

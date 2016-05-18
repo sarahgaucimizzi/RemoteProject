@@ -5,12 +5,15 @@ import com.sarahmizzi.fyp.utils.JsonUtils;
 
 /**
  * Created by Sarah on 10-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 public class GUI {
     public static final class ActivateWindow extends ApiMethod<String> {
         public final static String METHOD_NAME = "GUI.ActivateWindow";
 
-        /** All windows that we can navigate to */
+        /**
+         * All windows that we can navigate to
+         */
         public final static String HOME = "home";
         public final static String PROGRAMS = "programs";
         public final static String PICTURES = "pictures";
@@ -156,7 +159,9 @@ public class GUI {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -179,7 +184,9 @@ public class GUI {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public Boolean resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -203,7 +210,9 @@ public class GUI {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {

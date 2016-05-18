@@ -22,8 +22,8 @@ import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
     final String TAG = LoginActivity.class.getSimpleName();
-    Firebase mFirebaseRef;
 
+    Firebase mFirebaseRef;
     EditText username;
     EditText age;
     RadioButton femaleButton;
@@ -38,9 +38,9 @@ public class LoginActivity extends AppCompatActivity {
 
         mFirebaseRef = new Firebase("https://sweltering-torch-8619.firebaseio.com/android/users");
 
-        // Check if logged in already
+        // Check if logged in already continue to Remote Control
         AuthData authData = mFirebaseRef.getAuth();
-        if(authData != null){
+        if (authData != null) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -75,34 +75,40 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void registerUser(){
+    /*
+     * If new user, register the user and store age and gender
+     */
+    public void registerUser() {
         mFirebaseRef.createUser(username.getText().toString(), password.getText().toString(), new Firebase.ValueResultHandler<Map<String, Object>>() {
             @Override
             public void onSuccess(Map<String, Object> result) {
                 Log.d(TAG, "Successfully created user account with uid: " + result.get("uid"));
                 User user;
                 String ageValue = age.getText().toString();
-                if(femaleButton.isChecked()){
+                if (femaleButton.isChecked()) {
                     user = new User(username.getText().toString(), Integer.parseInt(ageValue), "female");
-                }
-                else{
+                } else {
                     user = new User(username.getText().toString(), Integer.parseInt(ageValue), "male");
                 }
                 Firebase userRef = mFirebaseRef.child(result.get("uid").toString());
-                if(user != null) {
+                if (user != null) {
                     userRef.setValue(user);
                 }
+                // Continue to authenticate and login user
                 loginUser();
             }
+
             @Override
             public void onError(FirebaseError firebaseError) {
-                // there was an error
                 Log.d(TAG, "ERROR: " + firebaseError.getMessage());
             }
         });
     }
 
-    public void loginUser(){
+    /*
+     * User already exists, login
+     */
+    public void loginUser() {
         mFirebaseRef.authWithPassword(username.getText().toString(), password.getText().toString(), new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
@@ -117,9 +123,9 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
+
             @Override
             public void onAuthenticationError(FirebaseError firebaseError) {
-                // there was an error
                 Log.d(TAG, "ERROR: " + firebaseError.getMessage());
             }
         });

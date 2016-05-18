@@ -2,6 +2,7 @@ package com.sarahmizzi.fyp.kodi.jsonrpc.api;
 
 /**
  * Created by Sarah on 29-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 
 import java.util.ArrayList;
@@ -186,7 +187,7 @@ public class PlayerType {
         }
 
         public static List<AudioStream> getListAudioStream(JsonNode node) {
-            final ArrayNode arrayNode = (ArrayNode)node;
+            final ArrayNode arrayNode = (ArrayNode) node;
             final List<AudioStream> result = new ArrayList<AudioStream>(node.size());
 
             for (JsonNode audioStreamNode : arrayNode) {
@@ -235,7 +236,7 @@ public class PlayerType {
         }
 
         public static List<Subtitle> getListSubtitle(JsonNode node) {
-            final ArrayNode arrayNode = (ArrayNode)node;
+            final ArrayNode arrayNode = (ArrayNode) node;
             final List<Subtitle> result = new ArrayList<Subtitle>(node.size());
 
             for (JsonNode subtitleNode : arrayNode) {

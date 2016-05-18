@@ -14,9 +14,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Sarah on 01-Feb-16.
- * Manages Kodi Hosts
- * Singleton that loads the list of registered hosts, keeps a {@link HostConnection} to the active host
- * and allows for creation and removal of hosts
+ * Manages Kodi Hosts. Refer to Kore Remote on Android.
  */
 public class HostManager {
     final String TAG = HostManager.class.getSimpleName();
@@ -144,8 +142,6 @@ public class HostManager {
 
     public HostConnection getConnection() {
         if (currentHostConnection == null) {
-            //currentHostInfo = getHostInfo();
-
             if (currentHostInfo != null) {
                 currentHostConnection = new HostConnection(currentHostInfo);
             }

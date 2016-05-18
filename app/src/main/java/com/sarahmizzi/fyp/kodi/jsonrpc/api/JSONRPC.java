@@ -6,6 +6,7 @@ import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiMethod;
 
 /**
  * Created by Sarah on 08-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 public class JSONRPC {
     public static final class Ping extends ApiMethod<String> {
@@ -19,7 +20,9 @@ public class JSONRPC {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {

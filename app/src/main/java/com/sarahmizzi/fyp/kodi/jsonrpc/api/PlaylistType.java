@@ -2,6 +2,7 @@ package com.sarahmizzi.fyp.kodi.jsonrpc.api;
 
 /**
  * Created by Sarah on 29-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 
 

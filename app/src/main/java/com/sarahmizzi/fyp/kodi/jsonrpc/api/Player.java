@@ -2,6 +2,7 @@ package com.sarahmizzi.fyp.kodi.jsonrpc.api;
 
 /**
  * Created by Sarah on 29-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,7 +13,7 @@ import com.sarahmizzi.fyp.utils.JsonUtils;
 import java.util.ArrayList;
 
 /**
- * All JSON RPC methods in Playyer.*
+ * All JSON RPC methods in Player.*
  */
 public class Player {
 
@@ -30,11 +31,13 @@ public class Player {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public ArrayList<PlayerType.GetActivePlayersReturnType> resultFromJson(ObjectNode jsonObject) throws ApiException {
-            ArrayNode resultNode = (ArrayNode)jsonObject.get(RESULT_NODE);
+            ArrayNode resultNode = (ArrayNode) jsonObject.get(RESULT_NODE);
             ArrayList<PlayerType.GetActivePlayersReturnType> res = new ArrayList<PlayerType.GetActivePlayersReturnType>();
             if (resultNode != null) {
                 for (JsonNode node : resultNode) {
@@ -53,7 +56,8 @@ public class Player {
 
         /**
          * Retrieves the currently played item
-         * @param playerId Player id for which to retrieve the item
+         *
+         * @param playerId   Player id for which to retrieve the item
          * @param properties Properties to retrieve.
          *                   See {@link ListType.FieldsAll} for a list of accepted values
          */
@@ -64,7 +68,9 @@ public class Player {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public ListType.ItemsAll resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -80,7 +86,8 @@ public class Player {
 
         /**
          * Retrieves the values of the given properties
-         * @param playerId Player id for which to retrieve the item
+         *
+         * @param playerId   Player id for which to retrieve the item
          * @param properties Properties to retrieve.
          *                   See {@link PlayerType.PropertyName} constants for a list of accepted values
          */
@@ -91,7 +98,9 @@ public class Player {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public PlayerType.PropertyValue resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -108,6 +117,7 @@ public class Player {
 
         /**
          * Pauses or unpause playback and returns the new state
+         *
          * @param playerId Player id for which to toggle the state
          */
         public PlayPause(int playerId) {
@@ -117,7 +127,9 @@ public class Player {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public Integer resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -133,8 +145,9 @@ public class Player {
 
         /**
          * Set the speed of the current playback
+         *
          * @param playerId Player id for which to toggle the state
-         * @param speed String enum in {@link GlobalType.IncrementDecrement}
+         * @param speed    String enum in {@link GlobalType.IncrementDecrement}
          */
         public SetSpeed(int playerId, String speed) {
             super();
@@ -143,7 +156,9 @@ public class Player {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public Integer resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -159,6 +174,7 @@ public class Player {
 
         /**
          * Stops playback
+         *
          * @param playerId Player id for which to stop playback
          */
         public Stop(int playerId) {
@@ -167,7 +183,9 @@ public class Player {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -189,8 +207,9 @@ public class Player {
 
         /**
          * Go to previous/next/specific item in the playlist.
+         *
          * @param playerId Player id for which to stop playback
-         * @param to Where to go. See this class constants for values
+         * @param to       Where to go. See this class constants for values
          */
         public GoTo(int playerId, String to) {
             super();
@@ -200,8 +219,9 @@ public class Player {
 
         /**
          * Go to previous/next/specific item in the playlist.
+         *
          * @param playerId Player id for which to stop playback
-         * @param to position in playlist
+         * @param to       position in playlist
          */
         public GoTo(int playerId, int to) {
             super();
@@ -210,7 +230,9 @@ public class Player {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -226,8 +248,9 @@ public class Player {
 
         /**
          * Seek through the playing item (by time)
+         *
          * @param playerId Player id for which to stop playback
-         * @param value Where to seek
+         * @param value    Where to seek
          */
         public Seek(int playerId, PlayerType.PositionTime value) {
             super();
@@ -237,8 +260,9 @@ public class Player {
 
         /**
          * Seek through the playing item (by percentage)
+         *
          * @param playerId Player id for which to stop playback
-         * @param value Percentage
+         * @param value    Percentage
          */
         public Seek(int playerId, int value) {
             super();
@@ -247,7 +271,9 @@ public class Player {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public PlayerType.SeekReturnType resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -271,9 +297,10 @@ public class Player {
 
         /**
          * Set the subtitle displayed by the player
+         *
          * @param playerId Player id for which to stop playback
          * @param subtitle One of the constanstants of this class
-         * @param enable Whether to enable subtitles to be displayed after setting the new subtitle
+         * @param enable   Whether to enable subtitles to be displayed after setting the new subtitle
          */
         public SetSubtitle(int playerId, String subtitle, boolean enable) {
             super();
@@ -284,9 +311,10 @@ public class Player {
 
         /**
          * Set the subtitle displayed by the player
+         *
          * @param playerId Player id for which to stop playback
          * @param subtitle Index of the subtitle to display
-         * @param enable Whether to enable subtitles to be displayed after setting the new subtitle
+         * @param enable   Whether to enable subtitles to be displayed after setting the new subtitle
          */
         public SetSubtitle(int playerId, int subtitle, boolean enable) {
             super();
@@ -296,7 +324,9 @@ public class Player {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -318,8 +348,9 @@ public class Player {
 
         /**
          * Set the audio stream played by the player
+         *
          * @param playerId Player id for which to stop playback
-         * @param stream One of the constanstants of this class
+         * @param stream   One of the constanstants of this class
          */
         public SetAudioStream(int playerId, String stream) {
             super();
@@ -329,8 +360,9 @@ public class Player {
 
         /**
          * Set the audio stream played by the player
+         *
          * @param playerId Player id for which to stop playback
-         * @param stream Index of the audio stream to play
+         * @param stream   Index of the audio stream to play
          */
         public SetAudioStream(int playerId, int stream) {
             super();
@@ -339,7 +371,9 @@ public class Player {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -355,8 +389,9 @@ public class Player {
 
         /**
          * Set the repeat mode of the player
+         *
          * @param playerId Player id for which to stop playback
-         * @param repeat Repeat mode, see {@link PlayerType.Repeat}
+         * @param repeat   Repeat mode, see {@link PlayerType.Repeat}
          */
         public SetRepeat(int playerId, String repeat) {
             super();
@@ -365,7 +400,9 @@ public class Player {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -381,8 +418,9 @@ public class Player {
 
         /**
          * Shuffle/Unshuffle items in the player
+         *
          * @param playerId Player id for which to shuffle
-         * @param shuffle True/false
+         * @param shuffle  True/false
          */
         public SetShuffle(int playerId, boolean shuffle) {
             super();
@@ -392,6 +430,7 @@ public class Player {
 
         /**
          * Shuffle/Unshuffle items in the player
+         *
          * @param playerId Player id for which to shuffle
          */
         public SetShuffle(int playerId) {
@@ -401,7 +440,9 @@ public class Player {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {
@@ -423,9 +464,10 @@ public class Player {
         /**
          * Start playback of either the playlist with the given ID, a slideshow with the pictures
          * from the given directory or a single file or an item from the database.
-         * @param itemType This should always be TYPE_PLAYLIST
+         *
+         * @param itemType   This should always be TYPE_PLAYLIST
          * @param playlistId Id
-         * @param position Position to start
+         * @param position   Position to start
          */
         public Open(String itemType, int playlistId, int position) {
             super();
@@ -438,6 +480,7 @@ public class Player {
         /**
          * Start playback of either the playlist with the given ID, a slideshow with the pictures
          * from the given directory or a single file or an item from the database.
+         *
          * @param playlistItem Item to play
          */
         public Open(PlaylistType.Item playlistItem) {
@@ -447,8 +490,9 @@ public class Player {
 
         /**
          * Starts playing a playlist or channel
+         *
          * @param itemType TYPE_PLAYLIST or TYPE_CHANNEL
-         * @param itemId Corresponding ID to open
+         * @param itemId   Corresponding ID to open
          */
         public Open(String itemType, int itemId) {
             super();
@@ -468,7 +512,9 @@ public class Player {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public String resultFromJson(ObjectNode jsonObject) throws ApiException {

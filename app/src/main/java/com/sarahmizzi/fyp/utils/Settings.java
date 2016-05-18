@@ -12,6 +12,7 @@ import java.util.Set;
 
 /**
  * Created by Sarah on 09-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 public class Settings {
     private static final String TAG = Settings.class.getSimpleName();
@@ -20,15 +21,10 @@ public class Settings {
      * The update interval for the records in the DB. If the last update is older than this value
      * a refresh will be triggered. Applicable to TV Shows and Movies.
      */
-//    public static final long DB_UPDATE_INTERVAL = 12 * DateUtils.HOUR_IN_MILLIS;
     public static final long DB_UPDATE_INTERVAL = 5 * DateUtils.MINUTE_IN_MILLIS;
 
     // Sort orders
-    public static final int SORT_BY_NAME = 0,
-            SORT_BY_DATE_ADDED = 1,
-            SORT_BY_RATING = 2,
-            SORT_BY_YEAR = 3,
-            SORT_BY_LENGTH = 4;
+    public static final int SORT_BY_NAME = 0;
 
     /**
      * Preferences keys.
@@ -98,6 +94,7 @@ public class Settings {
     public static final boolean DEFAULT_PREF_CHECKED_PVR_ENABLED = false;
 
     public static final String KEY_PREF_NAV_DRAWER_ITEMS = "pref_nav_drawer_items";
+
     public static String getNavDrawerItemsPrefKey(int hostId) {
         return Settings.KEY_PREF_NAV_DRAWER_ITEMS + hostId;
     }
@@ -107,6 +104,7 @@ public class Settings {
     /**
      * Determines the bit flags used by {@link DownloadManager.Request} to correspond to the enabled network connections
      * from the settings screen.
+     *
      * @return {@link DownloadManager.Request} network types bit flags that are enabled or 0 if none are enabled
      */
     public static int allowedDownloadNetworkTypes(Context context) {
@@ -114,8 +112,8 @@ public class Settings {
         Set<String> connPrefs = sharedPref.getStringSet(Settings.KEY_PREF_DOWNLOAD_TYPES,
                 new HashSet<>(Arrays.asList(new String[]{"0"})));
         int result = 0; // default none
-        for(String pref : connPrefs) {
-            switch( Integer.parseInt(pref) ) {
+        for (String pref : connPrefs) {
+            switch (Integer.parseInt(pref)) {
                 case 0:
                     result |= DownloadManager.Request.NETWORK_WIFI;
                     break;

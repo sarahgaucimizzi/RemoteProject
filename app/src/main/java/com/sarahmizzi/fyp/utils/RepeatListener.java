@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 
 /**
  * Created by Sarah on 09-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 public class RepeatListener implements View.OnTouchListener {
     private static final String TAG = RepeatListener.class.getSimpleName();
@@ -45,10 +46,6 @@ public class RepeatListener implements View.OnTouchListener {
 
     /**
      * Constructor for a repeat listener
-     *
-     * @param initialInterval The interval after first click event
-     * @param repeatInterval The interval after second and subsequent click events
-     * @param clickListener The OnClickListener, that will be called periodically
      */
     public RepeatListener(int initialInterval, int repeatInterval, View.OnClickListener clickListener) {
         this(initialInterval, repeatInterval, clickListener, null, null, null);
@@ -61,13 +58,6 @@ public class RepeatListener implements View.OnTouchListener {
 
     /**
      * Constructor for a repeat listener, with animation and vibration
-     *
-     * @param initialInterval The interval after first click event. If negative, no repeat will occur
-     * @param repeatInterval The interval after second and subsequent click events. If negative, no repeat will occur
-     * @param clickListener The OnClickListener, that will be called periodically
-     * @param animDown Animation to play on touch
-     * @param animUp Animation to play on release
-     * @param context Context used to access preferences and services
      */
     public RepeatListener(int initialInterval, int repeatInterval, View.OnClickListener clickListener,
                           Animation animDown, Animation animUp, Context context) {
@@ -83,12 +73,6 @@ public class RepeatListener implements View.OnTouchListener {
 
     /**
      * Handle touch events.
-     *
-     * Note: For buttons, this event Handler returns false, so that the other event handlers
-     * of buttons get called. For other views this event Handler consumes the event
-     * @param view
-     * @param motionEvent
-     * @return
      */
     public boolean onTouch(View view, MotionEvent motionEvent) {
         switch (motionEvent.getAction()) {
@@ -118,7 +102,7 @@ public class RepeatListener implements View.OnTouchListener {
                 }
                 break;
         }
-        // Consume the event for views other than buttons
+
         return !((view instanceof Button) || (view instanceof ImageButton));
     }
 }

@@ -2,21 +2,7 @@ package com.sarahmizzi.fyp.connection;
 
 /**
  * Created by Sarah on 29-Feb-16.
- */
-/*
- * Copyright 2015 Synced Synapse. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Refer to Kore Remote on Android.
  */
 
 import java.util.ArrayList;
@@ -26,7 +12,6 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiCallback;
-import com.sarahmizzi.fyp.kodi.jsonrpc.api.JSONRPC;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ListType;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.PlayerType;
 import com.sarahmizzi.fyp.notifications.Input;
@@ -39,14 +24,17 @@ public class HostConnectionObserver
         HostConnection.InputNotificationsObserver {
     public static final String TAG = HostConnectionObserver.class.getSimpleName();
 
+    private int lastCallResult = PlayerEventsObserver.PLAYER_NO_RESULT;
+    private PlayerType.GetActivePlayersReturnType lastGetActivePlayerResult = null;
+    private PlayerType.PropertyValue lastGetPropertiesResult = null;
+    private ListType.ItemsAll lastGetItemResult = null;
+    private int lastErrorCode;
+    private String lastErrorDescription;
+
     /**
      * Interface that an observer has to implement to receive player events
      */
     public interface PlayerEventsObserver {
-        /**
-         * Constants for possible events. Useful to save the last event and compare with the
-         * current one to check for differences
-         */
         public static final int PLAYER_NO_RESULT = 0,
                 PLAYER_CONNECTION_ERROR = 1,
                 PLAYER_IS_PLAYING = 2,
@@ -55,10 +43,6 @@ public class HostConnectionObserver
 
         /**
          * Notifies that something is playing
-         *
-         * @param getActivePlayerResult Active player obtained by a call to {@link com.sarahmizzi.fyp.kodi.jsonrpc.api.Player.GetActivePlayers}
-         * @param getPropertiesResult   Properties obtained by a call to {@link com.sarahmizzi.fyp.kodi.jsonrpc.api.Player.GetProperties}
-         * @param getItemResult         Currently playing item, obtained by a call to {@link com.sarahmizzi.fyp.kodi.jsonrpc.api.Player.GetItem}
          */
         public void playerOnPlay(PlayerType.GetActivePlayersReturnType getActivePlayerResult,
                                  PlayerType.PropertyValue getPropertiesResult,
@@ -66,10 +50,6 @@ public class HostConnectionObserver
 
         /**
          * Notifies that something is paused
-         *
-         * @param getActivePlayerResult Active player obtained by a call to {@link com.sarahmizzi.fyp.kodi.jsonrpc.api.Player.GetActivePlayers}
-         * @param getPropertiesResult   Properties obtained by a call to {@link com.sarahmizzi.fyp.kodi.jsonrpc.api.Player.GetProperties}
-         * @param getItemResult         Currently paused item, obtained by a call to {@link com.sarahmizzi.fyp.kodi.jsonrpc.api.Player.GetItem}
          */
         public void playerOnPause(PlayerType.GetActivePlayersReturnType getActivePlayerResult,
                                   PlayerType.PropertyValue getPropertiesResult,
@@ -82,9 +62,6 @@ public class HostConnectionObserver
 
         /**
          * Called when we get a connection error
-         *
-         * @param errorCode
-         * @param description
          */
         public void playerOnConnectionError(int errorCode, String description);
 
@@ -119,10 +96,9 @@ public class HostConnectionObserver
      */
     private List<PlayerEventsObserver> playerEventsObservers = new ArrayList<PlayerEventsObserver>();
 
-//    /**
-//     * Handlers for which observer, on which to notify them
-//     */
-//    private Map<PlayerEventsObserver, Handler> observerHandlerMap = new HashMap<PlayerEventsObserver, Handler>();
+    /**
+     * Handlers for which observer, on which to notify them
+     */
 
     private Handler checkerHandler = new Handler();
     private Runnable httpCheckerRunnable = new Runnable() {
@@ -140,65 +116,18 @@ public class HostConnectionObserver
         }
     };
 
-    /*private Runnable tcpCheckerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            final int PING_AFTER_ERROR_CHECK_INTERVAL = 2000,
-                    PING_AFTER_SUCCESS_CHECK_INTERVAL = 10000;
-            // If no one is listening to this, just exit
-            if (playerEventsObservers.size() == 0) return;
-
-            JSONRPC.Ping ping = new JSONRPC.Ping();
-            ping.execute(connection, new ApiCallback<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    // Ok, we've got a ping, if we were in a error or uninitialized state, update
-                    if ((lastCallResult == PlayerEventsObserver.PLAYER_NO_RESULT) ||
-                            (lastCallResult == PlayerEventsObserver.PLAYER_CONNECTION_ERROR)) {
-                        checkWhatsPlaying();
-                    }
-                    checkerHandler.postDelayed(tcpCheckerRunnable, PING_AFTER_SUCCESS_CHECK_INTERVAL);
-                }
-
-                @Override
-                public void onError(int errorCode, String description) {
-                    // Notify a connection error
-                    notifyConnectionError(errorCode, description, playerEventsObservers);
-                    checkerHandler.postDelayed(tcpCheckerRunnable, PING_AFTER_ERROR_CHECK_INTERVAL);
-                }
-            }, checkerHandler);
-//            if ((lastCallResult == PlayerEventsObserver.PLAYER_NO_RESULT) ||
-//                (lastCallResult == PlayerEventsObserver.PLAYER_CONNECTION_ERROR)) {
-//                checkerHandler.postDelayed(tcpCheckerRunnable, PING_AFTER_ERROR_CHECK_INTERVAL);
-//            } else {
-//                checkerHandler.postDelayed(tcpCheckerRunnable, PING_AFTER_SUCCESS_CHECK_INTERVAL);
-//            }
-        }
-    };*/
-
-    private int lastCallResult = PlayerEventsObserver.PLAYER_NO_RESULT;
-    private PlayerType.GetActivePlayersReturnType lastGetActivePlayerResult = null;
-    private PlayerType.PropertyValue lastGetPropertiesResult = null;
-    private ListType.ItemsAll lastGetItemResult = null;
-    private int lastErrorCode;
-    private String lastErrorDescription;
-
     public HostConnectionObserver(HostConnection connection) {
         this.connection = connection;
     }
 
     /**
      * Registers a new observer that will be notified about player events
-     *
-     * @param observer Observer
      */
     public void registerPlayerObserver(PlayerEventsObserver observer, boolean replyImmediately) {
         if (this.connection == null)
             return;
 
-        // Save this observer and a new handle to notify him
         playerEventsObservers.add(observer);
-//        observerHandlerMap.put(observer, new Handler());
 
         if (replyImmediately) replyWithLastResult(observer);
 
@@ -209,19 +138,15 @@ public class HostConnectionObserver
 
     /**
      * Unregisters a previously registered observer
-     *
-     * @param observer Observer to unregister
      */
     public void unregisterPlayerObserver(PlayerEventsObserver observer) {
         playerEventsObservers.remove(observer);
-//        observerHandlerMap.remove(observer);
 
         Log.d(TAG, "Unregistering observer. Still got " + playerEventsObservers.size() +
                 " observers.");
 
         if (playerEventsObservers.size() == 0) {
-            // No more observers, so unregister us from the host connection, or stop
-            // the http checker thread
+            // Unregister and stop checking
             checkerHandler.removeCallbacks(httpCheckerRunnable);
             lastCallResult = PlayerEventsObserver.PLAYER_NO_RESULT;
         }
@@ -244,28 +169,23 @@ public class HostConnectionObserver
      * The {@link HostConnection.PlayerNotificationsObserver} interface methods
      */
     public void onPlay(Player.OnPlay notification) {
-        // Just start our chain calls
         chainCallGetActivePlayers();
     }
 
     public void onPause(Player.OnPause
                                 notification) {
-        // Just start our chain calls
         chainCallGetActivePlayers();
     }
 
     public void onSpeedChanged(Player.OnSpeedChanged notification) {
-        // Just start our chain calls
         chainCallGetActivePlayers();
     }
 
     public void onSeek(Player.OnSeek notification) {
-        // Just start our chain calls
         chainCallGetActivePlayers();
     }
 
     public void onStop(Player.OnStop notification) {
-        // Just start our chain calls
         notifyNothingIsPlaying(playerEventsObservers);
     }
 
@@ -310,7 +230,6 @@ public class HostConnectionObserver
     private void checkWhatsPlaying() {
         Log.d(TAG, "Checking whats playing");
 
-        // Start the calls: Player.GetActivePlayers -> Player.GetProperties -> Player.GetItem
         chainCallGetActivePlayers();
     }
 
@@ -345,7 +264,6 @@ public class HostConnectionObserver
      */
     private void chainCallGetProperties(final PlayerType.GetActivePlayersReturnType getActivePlayersResult) {
         String propertiesToGet[] = new String[]{
-                // Check is something more is needed
                 PlayerType.PropertyName.SPEED,
                 PlayerType.PropertyName.PERCENTAGE,
                 PlayerType.PropertyName.POSITION,
@@ -421,12 +339,10 @@ public class HostConnectionObserver
                 ListType.FieldsAll.YEAR,
                 ListType.FieldsAll.DESCRIPTION,
         };
-//        propertiesToGet = ListType.FieldsAll.allValues;
         com.sarahmizzi.fyp.kodi.jsonrpc.api.Player.GetItem getItem = new com.sarahmizzi.fyp.kodi.jsonrpc.api.Player.GetItem(getActivePlayersResult.playerid, propertiesToGet);
         getItem.execute(connection, new ApiCallback<ListType.ItemsAll>() {
             @Override
             public void onSuccess(ListType.ItemsAll result) {
-                // Ok, now we got a result
                 notifySomethingIsPlaying(getActivePlayersResult, getPropertiesResult, result, playerEventsObservers);
             }
 
@@ -437,16 +353,11 @@ public class HostConnectionObserver
         }, checkerHandler);
     }
 
-    // Whether to foorce a reply or if the results are equal to the last one, don't reply
     private boolean forceReply = false;
 
     /**
      * Notifies a list of observers of a connection error
      * Only notifies them if the result is different from the last one
-     *
-     * @param errorCode   Error code to report
-     * @param description Description to report
-     * @param observers   List of observers
      */
     private void notifyConnectionError(final int errorCode, final String description, List<PlayerEventsObserver> observers) {
         // Reply if different from last result
@@ -468,28 +379,15 @@ public class HostConnectionObserver
     /**
      * Notifies a specific observer of a connection error
      * Always notifies the observer, and doesn't save results in last call
-     *
-     * @param errorCode   Error code to report
-     * @param description Description to report
-     * @param observer    Observers
      */
     private void notifyConnectionError(final int errorCode, final String description, PlayerEventsObserver observer) {
         observer.playerOnConnectionError(errorCode, description);
-//                Handler observerHandler = observerHandlerMap.get(observer);
-//                observerHandler.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        observer.playerOnConnectionError(errorCode, description);
-//                    }
-//                });
     }
 
 
     /**
      * Nothing is playing, notify observers calling playerOnStop
      * Only notifies them if the result is different from the last one
-     *
-     * @param observers List of observers
      */
     private void notifyNothingIsPlaying(List<PlayerEventsObserver> observers) {
         // Reply if forced or different from last result
@@ -508,8 +406,6 @@ public class HostConnectionObserver
     /**
      * Notifies a specific observer
      * Always notifies the observer, and doesn't save results in last call
-     *
-     * @param observer Observer
      */
     private void notifyNothingIsPlaying(PlayerEventsObserver observer) {
         observer.playerOnStop();
@@ -518,11 +414,6 @@ public class HostConnectionObserver
     /**
      * Something is playing or paused, notify observers
      * Only notifies them if the result is different from the last one
-     *
-     * @param getActivePlayersResult
-     * @param getPropertiesResult
-     * @param getItemResult
-     * @param observers              List of observers
      */
     private void notifySomethingIsPlaying(final PlayerType.GetActivePlayersReturnType getActivePlayersResult,
                                           final PlayerType.PropertyValue getPropertiesResult,
@@ -548,35 +439,11 @@ public class HostConnectionObserver
                 notifySomethingIsPlaying(getActivePlayersResult, getPropertiesResult, getItemResult, observer);
             }
         }
-
-        // Workaround for when playing has started but time info isn't updated yet.
-        // See https://github.com/xbmc/Kore/issues/78#issuecomment-104148064
-        // If the playing time returned is 0sec, we'll schedule another check
-        // to give Kodi some time to report the correct playing time
-        /*if ((currentCallResult == PlayerEventsObserver.PLAYER_IS_PLAYING) &&
-                (connection.getProtocol() == HostConnection.PROTOCOL_TCP) &&
-                (getPropertiesResult.time.ToSeconds() == 0)) {
-            LogUtils.LOGD(TAG, "Scheduling new call to check what's playing.");
-            final int RECHECK_INTERVAL = 3000;
-            checkerHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    forceReply = true;
-                    checkWhatsPlaying();
-                }
-            }, RECHECK_INTERVAL);
-        }*/
-
     }
 
     /**
      * Something is playing or paused, notify a specific observer
      * Always notifies the observer, and doesn't save results in last call
-     *
-     * @param getActivePlayersResult
-     * @param getPropertiesResult
-     * @param getItemResult
-     * @param observer               Specific observer
      */
     private void notifySomethingIsPlaying(final PlayerType.GetActivePlayersReturnType getActivePlayersResult,
                                           final PlayerType.PropertyValue getPropertiesResult,
@@ -594,8 +461,6 @@ public class HostConnectionObserver
     /**
      * Replies to the observer with the last result we got.
      * If we have no result, nothing will be called on the observer interface.
-     *
-     * @param observer Obserser to call with last result
      */
     public void replyWithLastResult(PlayerEventsObserver observer) {
         switch (lastCallResult) {

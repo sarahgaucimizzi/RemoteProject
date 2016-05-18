@@ -10,6 +10,7 @@ import com.sarahmizzi.fyp.R;
 
 /**
  * Created by Sarah on 09-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 public class UIUtils {
     public static final int initialButtonRepeatInterval = 400; // ms
@@ -17,7 +18,7 @@ public class UIUtils {
     public static final int buttonVibrationDuration = 50; //ms
 
     public static void handleVibration(Context context) {
-        if(context == null) return;
+        if (context == null) return;
 
         Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         if (!vibrator.hasVibrator()) return;

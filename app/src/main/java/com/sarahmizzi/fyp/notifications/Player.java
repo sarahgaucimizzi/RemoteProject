@@ -2,7 +2,9 @@ package com.sarahmizzi.fyp.notifications;
 
 /**
  * Created by Sarah on 02-Feb-16.
+ * Refer to Kore Remote on Android.
  */
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sarahmizzi.fyp.kodi.jsonrpc.api.ApiNotification;
@@ -17,7 +19,7 @@ public class Player {
      * Playback of a media item has been paused. If there is no ID available extra information will be provided.
      */
     public static class OnPause extends ApiNotification {
-        public static final String  NOTIFICATION_NAME = "Player.OnPause";
+        public static final String NOTIFICATION_NAME = "Player.OnPause";
 
         public final NotificationsData data;
 
@@ -26,7 +28,9 @@ public class Player {
             data = new NotificationsData(node.get(NotificationsData.DATA_NODE));
         }
 
-        public String getNotificationName() { return NOTIFICATION_NAME; }
+        public String getNotificationName() {
+            return NOTIFICATION_NAME;
+        }
     }
 
     /**
@@ -35,7 +39,7 @@ public class Player {
      * ID available extra information will be provided.
      */
     public static class OnPlay extends ApiNotification {
-        public static final String  NOTIFICATION_NAME = "Player.OnPlay";
+        public static final String NOTIFICATION_NAME = "Player.OnPlay";
 
         public final NotificationsData data;
 
@@ -44,7 +48,9 @@ public class Player {
             data = new NotificationsData(node.get(NotificationsData.DATA_NODE));
         }
 
-        public String getNotificationName() { return NOTIFICATION_NAME; }
+        public String getNotificationName() {
+            return NOTIFICATION_NAME;
+        }
     }
 
     /**
@@ -53,7 +59,7 @@ public class Player {
      * be provided.
      */
     public static class OnSeek extends ApiNotification {
-        public static final String  NOTIFICATION_NAME = "Player.OnSeek";
+        public static final String NOTIFICATION_NAME = "Player.OnSeek";
 
         public final NotificationsItem item;
         public final GlobalType.Time time;
@@ -61,14 +67,16 @@ public class Player {
 
         public OnSeek(ObjectNode node) {
             super(node);
-            ObjectNode dataNode = (ObjectNode)node.get("data");
+            ObjectNode dataNode = (ObjectNode) node.get("data");
             item = new NotificationsItem(dataNode.get(NotificationsItem.ITEM_NODE));
-            ObjectNode playerNode = (ObjectNode)dataNode.get("player");
+            ObjectNode playerNode = (ObjectNode) dataNode.get("player");
             time = new GlobalType.Time(playerNode.get("time"));
             seekoffset = new GlobalType.Time(playerNode.get("seekoffset"));
         }
 
-        public String getNotificationName() { return NOTIFICATION_NAME; }
+        public String getNotificationName() {
+            return NOTIFICATION_NAME;
+        }
     }
 
     /**
@@ -77,7 +85,7 @@ public class Player {
      * be provided.
      */
     public static class OnSpeedChanged extends ApiNotification {
-        public static final String  NOTIFICATION_NAME = "Player.OnSpeedChanged";
+        public static final String NOTIFICATION_NAME = "Player.OnSpeedChanged";
 
         public final NotificationsData data;
 
@@ -86,7 +94,9 @@ public class Player {
             data = new NotificationsData(node.get(NotificationsData.DATA_NODE));
         }
 
-        public String getNotificationName() { return NOTIFICATION_NAME; }
+        public String getNotificationName() {
+            return NOTIFICATION_NAME;
+        }
     }
 
     /**
@@ -94,19 +104,21 @@ public class Player {
      * Playback of a media item has been stopped. If there is no ID available extra information will be provided.
      */
     public static class OnStop extends ApiNotification {
-        public static final String  NOTIFICATION_NAME = "Player.OnStop";
+        public static final String NOTIFICATION_NAME = "Player.OnStop";
 
         public final boolean end;
         public final NotificationsItem item;
 
         public OnStop(ObjectNode node) {
             super(node);
-            ObjectNode dataNode = (ObjectNode)node.get("data");
+            ObjectNode dataNode = (ObjectNode) node.get("data");
             end = JsonUtils.booleanFromJsonNode(dataNode, "end");
             item = new NotificationsItem(dataNode.get(NotificationsItem.ITEM_NODE));
         }
 
-        public String getNotificationName() { return NOTIFICATION_NAME; }
+        public String getNotificationName() {
+            return NOTIFICATION_NAME;
+        }
     }
 
     /**
@@ -172,8 +184,8 @@ public class Player {
         public final NotificationsItem item;
 
         public NotificationsData(JsonNode node) {
-            item = new NotificationsItem((ObjectNode)node.get(NotificationsItem.ITEM_NODE));
-            player = new NotificationsPlayer((ObjectNode)node.get(NotificationsPlayer.PLAYER_NODE));
+            item = new NotificationsItem((ObjectNode) node.get(NotificationsItem.ITEM_NODE));
+            player = new NotificationsPlayer((ObjectNode) node.get(NotificationsPlayer.PLAYER_NODE));
         }
     }
 

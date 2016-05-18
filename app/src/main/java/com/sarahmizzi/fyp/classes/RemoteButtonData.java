@@ -19,7 +19,7 @@ public class RemoteButtonData extends ButtonTransaction {
         this.count = count;
     }
 
-    public void incrementCount(){
+    public void incrementCount() {
         this.count++;
     }
 }

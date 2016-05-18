@@ -11,7 +11,6 @@ import java.util.List;
  */
 public class JsonUtils {
     public static String stringFromJsonNode(JsonNode node, String key) {
-        // Duplicate code for performance resons
         if (node == null) return null;
         JsonNode value = node.get(key);
         if (value == null) return null;
@@ -37,7 +36,6 @@ public class JsonUtils {
     }
 
     public static int intFromJsonNode(JsonNode node, String key) {
-        // Duplicate code for performance resons
         if (node == null) return 0;
         JsonNode value = node.get(key);
         if (value == null) return 0;
@@ -75,27 +73,26 @@ public class JsonUtils {
                 result.add(innerNode.textValue());
             }
         } else {
-            // This isn't exactly what we're expecting, but we can return the text value
-            result = new ArrayList<String>(1);
+            result = new ArrayList<>(1);
             result.add(value.textValue());
         }
         return result;
     }
 
     public static List<Integer> integerListFromJsonNode(JsonNode node, String key) {
-        if (node == null) return new ArrayList<Integer>(0);
+        if (node == null) return new ArrayList<>(0);
         JsonNode value = node.get(key);
-        if (value == null) return new ArrayList<Integer>(0);
+        if (value == null) return new ArrayList<>(0);
 
         ArrayList<Integer> result;
         if (value.isArray()) {
             ArrayNode arrayNode = (ArrayNode) value;
-            result = new ArrayList<Integer>(arrayNode.size());
+            result = new ArrayList<>(arrayNode.size());
             for (JsonNode innerNode : arrayNode) {
                 result.add(innerNode.asInt());
             }
         } else {
-            result = new ArrayList<Integer>(1);
+            result = new ArrayList<>(1);
             result.add(value.asInt());
         }
         return result;

@@ -2,6 +2,7 @@ package com.sarahmizzi.fyp.kodi.jsonrpc.api;
 
 /**
  * Created by Sarah on 29-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -60,6 +61,7 @@ public class MediaType {
 
         /**
          * Constructor from Json node
+         *
          * @param node Json node
          */
         public DetailsBase(JsonNode node) {

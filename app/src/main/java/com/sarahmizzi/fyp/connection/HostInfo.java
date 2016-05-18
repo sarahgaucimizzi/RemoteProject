@@ -2,7 +2,7 @@ package com.sarahmizzi.fyp.connection;
 
 /**
  * Created by Sarah on 01-Feb-16.
- * Kodi Host Information
+ * Kodi Host Information. Check configuration from Settings menu in Kodi.
  */
 public class HostInfo {
     final String TAG = HostInfo.class.getSimpleName();
@@ -27,9 +27,13 @@ public class HostInfo {
         this.password = password;
     }
 
-    public int getId() { return id; }
+    public int getId() {
+        return id;
+    }
 
-    public void setId(int id) { this.id = id; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

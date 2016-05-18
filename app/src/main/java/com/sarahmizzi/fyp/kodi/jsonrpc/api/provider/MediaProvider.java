@@ -15,6 +15,7 @@ import java.util.Arrays;
 
 /**
  * Created by Sarah on 09-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 public class MediaProvider extends ContentProvider {
     private static final String TAG = MediaProvider.class.getSimpleName();
@@ -202,7 +203,9 @@ public class MediaProvider extends ContentProvider {
         return true;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getType(Uri uri) {
         final int match = sUriMatcher.match(uri);
@@ -278,7 +281,9 @@ public class MediaProvider extends ContentProvider {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
@@ -299,7 +304,9 @@ public class MediaProvider extends ContentProvider {
         return cursor;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         Log.v(TAG, "insert(uri=" + uri + ", values=" + values.toString() + ")");
@@ -322,7 +329,9 @@ public class MediaProvider extends ContentProvider {
         return insertedUri;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
         long startTime = System.currentTimeMillis();
@@ -416,7 +425,9 @@ public class MediaProvider extends ContentProvider {
         return values.length;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         Log.d(TAG, "update(uri=" + uri + ", values=" + values.toString() + ")");
@@ -450,7 +461,9 @@ public class MediaProvider extends ContentProvider {
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         final int match = sUriMatcher.match(uri);

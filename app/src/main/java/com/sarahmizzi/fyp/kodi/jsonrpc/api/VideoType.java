@@ -2,6 +2,7 @@ package com.sarahmizzi.fyp.kodi.jsonrpc.api;
 
 /**
  * Created by Sarah on 29-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 
 import java.util.ArrayList;
@@ -164,7 +165,7 @@ public class VideoType {
         public Streams(JsonNode node) {
             audio = new ArrayList<Audio>();
             if (node.has(AUDIO)) {
-                ArrayNode arrayNode = (ArrayNode)node.get(AUDIO);
+                ArrayNode arrayNode = (ArrayNode) node.get(AUDIO);
                 for (JsonNode innerNode : arrayNode) {
                     audio.add(new Audio(innerNode));
                 }
@@ -172,7 +173,7 @@ public class VideoType {
 
             subtitle = new ArrayList<Subtitle>();
             if (node.has(SUBTITLE)) {
-                ArrayNode arrayNode = (ArrayNode)node.get(SUBTITLE);
+                ArrayNode arrayNode = (ArrayNode) node.get(SUBTITLE);
                 for (JsonNode innerNode : arrayNode) {
                     subtitle.add(new Subtitle(innerNode));
                 }
@@ -180,7 +181,7 @@ public class VideoType {
 
             video = new ArrayList<Video>();
             if (node.has(VIDEO)) {
-                ArrayNode arrayNode = (ArrayNode)node.get(VIDEO);
+                ArrayNode arrayNode = (ArrayNode) node.get(VIDEO);
                 for (JsonNode innerNode : arrayNode) {
                     video.add(new Video(innerNode));
                 }
@@ -246,6 +247,7 @@ public class VideoType {
 
         /**
          * Constructor
+         *
          * @param node Json node
          */
         public DetailsBase(JsonNode node) {
@@ -421,7 +423,7 @@ public class VideoType {
         public final String TAG = "tag";
         public final String ART = "art";
 
-        public final static String[] allValues = new String[] {
+        public final static String[] allValues = new String[]{
                 TITLE, GENRE, YEAR, RATING, PLOT, STUDIO, MPAA, CAST, PLAYCOUNT, EPISODE,
                 IMDBNUMBER, PREMIERED, VOTES, LASTPLAYED, FANART, THUMBNAIL, FILE, ORIGINALTITLE,
                 SORTTITLE, EPISODEGUIDE, SEASON, WATCHEDEPISODES, DATEADDED, TAG, ART
@@ -504,7 +506,7 @@ public class VideoType {
         public final String WATCHEDEPISODES = "watchedepisodes";
         public final String ART = "art";
 
-        public final static String[] allValues = new String[] {
+        public final static String[] allValues = new String[]{
                 SEASON, SHOWTITLE, PLAYCOUNT, EPISODE, FANART, THUMBNAIL, TVSHOWID,
                 WATCHEDEPISODES, ART
         };
@@ -567,10 +569,10 @@ public class VideoType {
         public final String UNIQUEID = "uniqueid";
         public final String ART = "art";
 
-        public final static String[] allValues = new String[] {
+        public final static String[] allValues = new String[]{
                 TITLE, PLOT, VOTES, RATING, WRITER, FIRSTAIRED, PLAYCOUNT, RUNTIME, DIRECTOR,
-                PRODUCTIONCODE, SEASON, EPISODE, ORIGINALTITLE,  SHOWTITLE, CAST, STREAMDETAILS,
-                LASTPLAYED, FANART,  THUMBNAIL, FILE, RESUME, TVSHOWID, DATEADDED, UNIQUEID, ART
+                PRODUCTIONCODE, SEASON, EPISODE, ORIGINALTITLE, SHOWTITLE, CAST, STREAMDETAILS,
+                LASTPLAYED, FANART, THUMBNAIL, FILE, RESUME, TVSHOWID, DATEADDED, UNIQUEID, ART
         };
     }
 
@@ -648,7 +650,7 @@ public class VideoType {
         public final String TAG = "tag";
         public final String ART = "art";
 
-        public final static String[] allValues = new String[] {
+        public final static String[] allValues = new String[]{
                 TITLE, PLAYCOUNT, RUNTIME, DIRECTOR, STUDIO, YEAR, PLOT, ALBUM, ARTIST, GENRE,
                 TRACK, STREAMDETAILS, LASTPLAYED, FANART, THUMBNAIL, FILE, RESUME, DATEADDED,
                 TAG, ART
@@ -679,6 +681,7 @@ public class VideoType {
 
         /**
          * Constructor
+         *
          * @param node Json node
          */
         public DetailsMusicVideo(JsonNode node) {

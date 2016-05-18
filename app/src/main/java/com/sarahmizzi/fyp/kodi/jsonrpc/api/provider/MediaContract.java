@@ -6,6 +6,7 @@ import android.provider.ContactsContract;
 
 /**
  * Created by Sarah on 09-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 public class MediaContract {
     public static final String CONTENT_AUTHORITY = "org.xbmc.kore.provider";
@@ -25,7 +26,9 @@ public class MediaContract {
     public static final String PATH_ALBUM_GENRES = "album_genres";
     public static final String PATH_MUSIC_VIDEOS = "music_videos";
 
-    /** Last time this entry was updated or synchronized. */
+    /**
+     * Last time this entry was updated or synchronized.
+     */
     public interface SyncColumns {
         String UPDATED = "updated";
     }
@@ -50,12 +53,16 @@ public class MediaContract {
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.org.xbmc." + PATH_HOSTS;
 
-        /** Build {@link Uri} for requested {@link #_ID}. */
+        /**
+         * Build {@link Uri} for requested {@link #_ID}.
+         */
         public static Uri buildHostUri(long hostId) {
             return CONTENT_URI.buildUpon().appendPath(String.valueOf(hostId)).build();
         }
 
-        /** Read {@link #_ID} from {@link Hosts} {@link Uri}. */
+        /**
+         * Read {@link #_ID} from {@link Hosts} {@link Uri}.
+         */
         public static String getHostId(Uri uri) {
             return uri.getPathSegments().get(1);
         }
@@ -115,14 +122,18 @@ public class MediaContract {
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.org.xbmc." + PATH_MOVIES;
 
-        /** Build {@link Uri} for movies list. */
+        /**
+         * Build {@link Uri} for movies list.
+         */
         public static Uri buildMoviesListUri(long hostId) {
             return Hosts.buildHostUri(hostId).buildUpon()
                     .appendPath(PATH_MOVIES)
                     .build();
         }
 
-        /** Build {@link Uri} for requested {@link #_ID}. */
+        /**
+         * Build {@link Uri} for requested {@link #_ID}.
+         */
         public static Uri buildMovieUri(long hostId, long movieId) {
             return Hosts.buildHostUri(hostId).buildUpon()
                     .appendPath(PATH_MOVIES)
@@ -130,7 +141,9 @@ public class MediaContract {
                     .build();
         }
 
-        /** Read {@link #_ID} from {@link Movies} {@link Uri}. */
+        /**
+         * Read {@link #_ID} from {@link Movies} {@link Uri}.
+         */
         public static String getMovieId(Uri uri) {
             return uri.getPathSegments().get(3);
         }
@@ -167,7 +180,9 @@ public class MediaContract {
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.org.xbmc." + PATH_MOVIE_CAST;
 
-        /** Build {@link Uri} for requested {@link #_ID}. */
+        /**
+         * Build {@link Uri} for requested {@link #_ID}.
+         */
         public static Uri buildMovieCastListUri(long hostId, long movieId) {
             return Movies.buildMovieUri(hostId, movieId).buildUpon()
                     .appendPath(PATH_MOVIE_CAST)
@@ -209,14 +224,18 @@ public class MediaContract {
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.org.xbmc." + PATH_TVSHOWS;
 
-        /** Build {@link Uri} for tvshows list. */
+        /**
+         * Build {@link Uri} for tvshows list.
+         */
         public static Uri buildTVShowsListUri(long hostId) {
             return Hosts.buildHostUri(hostId).buildUpon()
                     .appendPath(PATH_TVSHOWS)
                     .build();
         }
 
-        /** Build {@link Uri} for requested {@link #_ID}. */
+        /**
+         * Build {@link Uri} for requested {@link #_ID}.
+         */
         public static Uri buildTVShowUri(long hostId, long tvshowId) {
             return Hosts.buildHostUri(hostId).buildUpon()
                     .appendPath(PATH_TVSHOWS)
@@ -224,7 +243,9 @@ public class MediaContract {
                     .build();
         }
 
-        /** Read {@link #_ID} from {@link TVShows} {@link Uri}. */
+        /**
+         * Read {@link #_ID} from {@link TVShows} {@link Uri}.
+         */
         public static String getTVShowId(Uri uri) {
             return uri.getPathSegments().get(3);
         }
@@ -259,7 +280,9 @@ public class MediaContract {
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.org.xbmc." + PATH_TVSHOW_CAST;
 
-        /** Build {@link Uri} for requested {@link #_ID}. */
+        /**
+         * Build {@link Uri} for requested {@link #_ID}.
+         */
         public static Uri buildTVShowCastListUri(long hostId, long tvshowId) {
             return TVShows.buildTVShowUri(hostId, tvshowId).buildUpon()
                     .appendPath(PATH_TVSHOW_CAST)
@@ -294,14 +317,18 @@ public class MediaContract {
                 "vnd.android.cursor.item/vnd.org.xbmc." + PATH_SEASONS;
 
 
-        /** Build {@link Uri} for requested {@link #_ID}. */
+        /**
+         * Build {@link Uri} for requested {@link #_ID}.
+         */
         public static Uri buildTVShowSeasonsListUri(long hostId, long tvshowId) {
             return TVShows.buildTVShowUri(hostId, tvshowId).buildUpon()
                     .appendPath(PATH_SEASONS)
                     .build();
         }
 
-        /** Build {@link Uri} for requested {@link #_ID}. */
+        /**
+         * Build {@link Uri} for requested {@link #_ID}.
+         */
         public static Uri buildTVShowSeasonUri(long hostId, long tvshowId, long season) {
             return TVShows.buildTVShowUri(hostId, tvshowId).buildUpon()
                     .appendPath(PATH_SEASONS)
@@ -309,7 +336,9 @@ public class MediaContract {
                     .build();
         }
 
-        /** Read {@link #_ID} from {@link Seasons} {@link Uri}. */
+        /**
+         * Read {@link #_ID} from {@link Seasons} {@link Uri}.
+         */
         public static String getTVShowSeasonId(Uri uri) {
             return uri.getPathSegments().get(5);
         }
@@ -364,21 +393,27 @@ public class MediaContract {
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.org.xbmc." + PATH_EPISODES;
 
-        /** Build {@link Uri} for tvshows list. */
+        /**
+         * Build {@link Uri} for tvshows list.
+         */
         public static Uri buildTVShowEpisodesListUri(long hostId, long tvshowId) {
             return TVShows.buildTVShowUri(hostId, tvshowId).buildUpon()
                     .appendPath(PATH_EPISODES)
                     .build();
         }
 
-        /** Build {@link Uri} for tvshows for a season list. */
+        /**
+         * Build {@link Uri} for tvshows for a season list.
+         */
         public static Uri buildTVShowSeasonEpisodesListUri(long hostId, long tvshowId, long season) {
             return Seasons.buildTVShowSeasonUri(hostId, tvshowId, season).buildUpon()
                     .appendPath(PATH_EPISODES)
                     .build();
         }
 
-        /** Build {@link Uri} for requested {@link #_ID}. */
+        /**
+         * Build {@link Uri} for requested {@link #_ID}.
+         */
         public static Uri buildTVShowEpisodeUri(long hostId, long tvshowId, long episodeId) {
             return TVShows.buildTVShowUri(hostId, tvshowId).buildUpon()
                     .appendPath(PATH_EPISODES)
@@ -386,7 +421,9 @@ public class MediaContract {
                     .build();
         }
 
-        /** Build {@link Uri} for requested {@link #_ID}. */
+        /**
+         * Build {@link Uri} for requested {@link #_ID}.
+         */
         public static Uri buildTVShowSeasonEpisodeUri(long hostId, long tvshowId,
                                                       long season, long episodeId) {
             return Seasons.buildTVShowSeasonUri(hostId, tvshowId, season).buildUpon()
@@ -395,12 +432,16 @@ public class MediaContract {
                     .build();
         }
 
-        /** Read {@link #_ID} from {@link Episodes} {@link Uri}. */
+        /**
+         * Read {@link #_ID} from {@link Episodes} {@link Uri}.
+         */
         public static String getTVShowEpisodeId(Uri uri) {
             return uri.getPathSegments().get(5);
         }
 
-        /** Read {@link #_ID} from {@link Episodes} {@link Uri}. */
+        /**
+         * Read {@link #_ID} from {@link Episodes} {@link Uri}.
+         */
         public static String getTVShowSeasonEpisodeId(Uri uri) {
             return uri.getPathSegments().get(7);
         }
@@ -437,14 +478,18 @@ public class MediaContract {
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.org.xbmc." + PATH_ARTISTS;
 
-        /** Build {@link Uri} for artists list. */
+        /**
+         * Build {@link Uri} for artists list.
+         */
         public static Uri buildArtistsListUri(long hostId) {
             return Hosts.buildHostUri(hostId).buildUpon()
                     .appendPath(PATH_ARTISTS)
                     .build();
         }
 
-        /** Build {@link Uri} for requested {@link #_ID}. */
+        /**
+         * Build {@link Uri} for requested {@link #_ID}.
+         */
         public static Uri buildArtistUri(long hostId, long artistId) {
             return Hosts.buildHostUri(hostId).buildUpon()
                     .appendPath(PATH_ARTISTS)
@@ -452,7 +497,9 @@ public class MediaContract {
                     .build();
         }
 
-        /** Read {@link #_ID} from {@link Artists} {@link Uri}. */
+        /**
+         * Read {@link #_ID} from {@link Artists} {@link Uri}.
+         */
         public static String getArtistId(Uri uri) {
             return uri.getPathSegments().get(3);
         }
@@ -491,14 +538,18 @@ public class MediaContract {
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.org.xbmc." + PATH_ALBUMS;
 
-        /** Build {@link Uri} for albums list. */
+        /**
+         * Build {@link Uri} for albums list.
+         */
         public static Uri buildAlbumsListUri(long hostId) {
             return Hosts.buildHostUri(hostId).buildUpon()
                     .appendPath(PATH_ALBUMS)
                     .build();
         }
 
-        /** Build {@link Uri} for albums artists list. */
+        /**
+         * Build {@link Uri} for albums artists list.
+         */
         public static Uri buildAlbumArtistsListUri(long hostId, long albumId) {
             return Hosts.buildHostUri(hostId).buildUpon()
                     .appendPath(PATH_ALBUMS)
@@ -507,7 +558,9 @@ public class MediaContract {
                     .build();
         }
 
-        /** Build {@link Uri} for albums genres list. */
+        /**
+         * Build {@link Uri} for albums genres list.
+         */
         public static Uri buildAlbumGenresListUri(long hostId, long albumId) {
             return Hosts.buildHostUri(hostId).buildUpon()
                     .appendPath(PATH_ALBUMS)
@@ -516,7 +569,9 @@ public class MediaContract {
                     .build();
         }
 
-        /** Build {@link Uri} for requested {@link #_ID}. */
+        /**
+         * Build {@link Uri} for requested {@link #_ID}.
+         */
         public static Uri buildAlbumUri(long hostId, long albumId) {
             return Hosts.buildHostUri(hostId).buildUpon()
                     .appendPath(PATH_ALBUMS)
@@ -524,7 +579,9 @@ public class MediaContract {
                     .build();
         }
 
-        /** Read {@link #_ID} from {@link Albums} {@link Uri}. */
+        /**
+         * Read {@link #_ID} from {@link Albums} {@link Uri}.
+         */
         public static String getAlbumId(Uri uri) {
             return uri.getPathSegments().get(3);
         }
@@ -560,14 +617,18 @@ public class MediaContract {
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.org.xbmc." + PATH_SONGS;
 
-        /** Build {@link Uri} for albums list. */
+        /**
+         * Build {@link Uri} for albums list.
+         */
         public static Uri buildSongsListUri(long hostId, long albumId) {
             return Albums.buildAlbumUri(hostId, albumId).buildUpon()
                     .appendPath(PATH_SONGS)
                     .build();
         }
 
-        /** Build {@link Uri} for requested {@link #_ID}. */
+        /**
+         * Build {@link Uri} for requested {@link #_ID}.
+         */
         public static Uri buildSongUri(long hostId, long albumId, long songId) {
             return Albums.buildAlbumUri(hostId, albumId).buildUpon()
                     .appendPath(PATH_SONGS)
@@ -575,7 +636,9 @@ public class MediaContract {
                     .build();
         }
 
-        /** Read {@link #_ID} from {@link Albums} {@link Uri}. */
+        /**
+         * Read {@link #_ID} from {@link Albums} {@link Uri}.
+         */
         public static String getSongId(Uri uri) {
             return uri.getPathSegments().get(5);
         }
@@ -606,14 +669,18 @@ public class MediaContract {
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.org.xbmc." + PATH_AUDIO_GENRES;
 
-        /** Build {@link Uri} for genres list. */
+        /**
+         * Build {@link Uri} for genres list.
+         */
         public static Uri buildAudioGenresListUri(long hostId) {
             return Hosts.buildHostUri(hostId).buildUpon()
                     .appendPath(PATH_AUDIO_GENRES)
                     .build();
         }
 
-        /** Build {@link Uri} for requested {@link #_ID}. */
+        /**
+         * Build {@link Uri} for requested {@link #_ID}.
+         */
         public static Uri buildAudioGenreUri(long hostId, long genreId) {
             return Hosts.buildHostUri(hostId).buildUpon()
                     .appendPath(PATH_AUDIO_GENRES)
@@ -621,7 +688,9 @@ public class MediaContract {
                     .build();
         }
 
-        /** Read {@link #_ID} from {@link Albums} {@link Uri}. */
+        /**
+         * Read {@link #_ID} from {@link Albums} {@link Uri}.
+         */
         public static String getAudioGenreId(Uri uri) {
             return uri.getPathSegments().get(3);
         }
@@ -647,7 +716,9 @@ public class MediaContract {
         public static final String CONTENT_TYPE =
                 "vnd.android.cursor.dir/vnd.org.xbmc." + PATH_ALBUM_ARTISTS;
 
-        /** Build {@link Uri} for requested {@link #_ID}. */
+        /**
+         * Build {@link Uri} for requested {@link #_ID}.
+         */
         public static Uri buildAlbumsForArtistListUri(long hostId, long artistId) {
             return Hosts.buildHostUri(hostId).buildUpon()
                     .appendPath(PATH_ARTISTS)
@@ -677,7 +748,9 @@ public class MediaContract {
         public static final String CONTENT_TYPE =
                 "vnd.android.cursor.dir/vnd.org.xbmc." + PATH_ALBUM_GENRES;
 
-        /** Build {@link Uri} for requested {@link #_ID}. */
+        /**
+         * Build {@link Uri} for requested {@link #_ID}.
+         */
         public static Uri buildAlbumsForGenreListUri(long hostId, long genreId) {
             return Hosts.buildHostUri(hostId).buildUpon()
                     .appendPath(PATH_AUDIO_GENRES)
@@ -752,14 +825,18 @@ public class MediaContract {
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.org.xbmc." + PATH_MUSIC_VIDEOS;
 
-        /** Build {@link Uri} for music videos list. */
+        /**
+         * Build {@link Uri} for music videos list.
+         */
         public static Uri buildMusicVideosListUri(long hostId) {
             return Hosts.buildHostUri(hostId).buildUpon()
                     .appendPath(PATH_MUSIC_VIDEOS)
                     .build();
         }
 
-        /** Build {@link Uri} for requested {@link #_ID}. */
+        /**
+         * Build {@link Uri} for requested {@link #_ID}.
+         */
         public static Uri buildMusicVideoUri(long hostId, long musicVideoId) {
             return Hosts.buildHostUri(hostId).buildUpon()
                     .appendPath(PATH_MUSIC_VIDEOS)
@@ -767,7 +844,9 @@ public class MediaContract {
                     .build();
         }
 
-        /** Read {@link #_ID} from {@link MusicVideos} {@link Uri}. */
+        /**
+         * Read {@link #_ID} from {@link MusicVideos} {@link Uri}.
+         */
         public static String getMusicVideoId(Uri uri) {
             return uri.getPathSegments().get(3);
         }

@@ -33,16 +33,18 @@ import okhttp3.Route;
 
 /**
  * Created by Sarah on 02-Feb-16.
- * For communication with host.
+ * For communication with host. Refer to Kore Remote for Android.
  */
 public class HostConnection {
     final String TAG = HostConnection.class.getSimpleName();
-    private static final int DEFAULT_CONNECT_TIMEOUT = 10000; // ms
+
     public static final int PROTOCOL_HTTP = 1;
+
+    private static final int DEFAULT_CONNECT_TIMEOUT = 10000; // ms
+
     private final int connectTimeout;
     private final HostInfo hostInfo;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final HashMap<String, MethodCallInfo<?>> clientCallbacks = new HashMap<String, MethodCallInfo<?>>();
 
     private ExecutorService executorService;
     private OkHttpClient httpClient = null;
@@ -85,7 +87,6 @@ public class HostConnection {
         };
 
         executorService.execute(command);
-        //new Thread(command).start();
     }
 
     /**
@@ -114,7 +115,6 @@ public class HostConnection {
                 });
             }
         } catch (final ApiException e) {
-            // Got an error, call error handler
             if ((handler != null) && (callback != null)) {
                 handler.post(new Runnable() {
                     @Override
@@ -153,9 +153,6 @@ public class HostConnection {
 
     /**
      * Send an OkHttp POST request
-     *
-     * @param request Request to send
-     * @throws ApiException
      */
     private Response sendOkHttpRequest(final OkHttpClient client, final Request request) throws ApiException {
         try {
@@ -163,15 +160,12 @@ public class HostConnection {
         } catch (ProtocolException e) {
             Log.w(TAG, "Got a Protocol Exception when trying to send OkHttp request. " +
                     "Trying again without connection pooling to try to circunvent this", e);
-            // Hack to circumvent a Protocol Exception that occurs when the server returns bogus Status Line
-            // http://forum.kodi.tv/showthread.php?tid=224288
             httpClient = getNewOkHttpClientNoKeepAlive();
             throw new ApiException(ApiException.IO_EXCEPTION_WHILE_SENDING_REQUEST, e);
         } catch (IOException e) {
             Log.w(TAG, "Failed to send OkHttp request.", e);
             throw new ApiException(ApiException.IO_EXCEPTION_WHILE_SENDING_REQUEST, e);
         } catch (RuntimeException e) {
-            // Seems like OkHttp throws a RuntimeException when it gets a malformed URL
             Log.w(TAG, "Got a Runtime exception when sending OkHttp request. Probably a malformed URL.", e);
             throw new ApiException(ApiException.IO_EXCEPTION_WHILE_SENDING_REQUEST, e);
         }
@@ -179,19 +173,14 @@ public class HostConnection {
 
     /**
      * Reads the response from the server
-     *
-     * @param response TcpResponse from OkHttp
-     * @return TcpResponse body string
-     * @throws ApiException
      */
     private String handleOkHttpResponse(Response response) throws ApiException {
         try {
-            // LogUtils.LOGD(TAG, "Reading HTTP response.");
             int responseCode = response.code();
 
             switch (responseCode) {
                 case 200:
-                    // All ok, read response
+                    // Status OK
                     String res = response.body().string();
                     response.body().close();
                     Log.d(TAG, "OkHTTP response: " + res);
@@ -216,7 +205,6 @@ public class HostConnection {
     }
 
     private ObjectNode parseJsonResponse(String response) throws ApiException {
-        // LogUtils.LOGD(TAG, "Parsing JSON response");
         try {
             ObjectNode jsonResponse = (ObjectNode) objectMapper.readTree(response);
 
@@ -225,7 +213,6 @@ public class HostConnection {
             }
 
             if (!jsonResponse.has(ApiMethod.RESULT_NODE)) {
-                // Something strange is going on
                 throw new ApiException(ApiException.INVALID_JSON_RESPONSE_FROM_HOST,
                         "Result doesn't contain a result node.");
             }
@@ -242,8 +229,6 @@ public class HostConnection {
 
     /**
      * Helper class to aggregate a method, callback and handler
-     *
-     * @param <T>
      */
     private static class MethodCallInfo<T> {
         public final ApiMethod<T> method;
@@ -259,15 +244,21 @@ public class HostConnection {
 
     public interface PlayerNotificationsObserver {
         public void onPlay(Player.OnPlay notification);
+
         public void onPause(Player.OnPause notification);
+
         public void onSpeedChanged(Player.OnSpeedChanged notification);
+
         public void onSeek(Player.OnSeek notification);
+
         public void onStop(Player.OnStop notification);
     }
 
     public interface SystemNotificationsObserver {
         public void onQuit(System.OnQuit notification);
+
         public void onRestart(System.OnRestart notification);
+
         public void onSleep(System.OnSleep notification);
     }
 

@@ -5,6 +5,7 @@ import com.sarahmizzi.fyp.utils.JsonUtils;
 
 /**
  * Created by Sarah on 08-Mar-16.
+ * Refer to Kore Remote on Android.
  */
 public class Application {
 
@@ -17,7 +18,9 @@ public class Application {
         }
 
         @Override
-        public String getMethodName() { return METHOD_NAME; }
+        public String getMethodName() {
+            return METHOD_NAME;
+        }
 
         @Override
         public Integer resultFromJson(ObjectNode jsonObject) throws ApiException {

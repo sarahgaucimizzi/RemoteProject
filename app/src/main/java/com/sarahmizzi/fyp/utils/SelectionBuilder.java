@@ -13,6 +13,7 @@ import java.util.Map;
 
 /**
  * Created by Sarah on 09-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 public class SelectionBuilder {
     private static final String TAG = SelectionBuilder.class.getSimpleName();
@@ -43,7 +44,6 @@ public class SelectionBuilder {
                         "Valid selection required when including arguments=");
             }
 
-            // Shortcut when clause is empty
             return this;
         }
 
@@ -82,8 +82,6 @@ public class SelectionBuilder {
 
     /**
      * Return selection string for current internal state.
-     *
-     * @see #getSelectionArgs()
      */
     public String getSelection() {
         return mSelection.toString();
@@ -91,8 +89,6 @@ public class SelectionBuilder {
 
     /**
      * Return selection arguments for current internal state.
-     *
-     * @see #getSelection()
      */
     public String[] getSelectionArgs() {
         return mSelectionArgs.toArray(new String[mSelectionArgs.size()]);

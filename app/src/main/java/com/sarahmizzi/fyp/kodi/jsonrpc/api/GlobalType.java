@@ -2,6 +2,7 @@ package com.sarahmizzi.fyp.kodi.jsonrpc.api;
 
 /**
  * Created by Sarah on 29-Feb-16.
+ * Refer to Kore Remote on Android.
  */
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -35,6 +36,7 @@ public class GlobalType {
 
         /**
          * Returns the seconds from midnight that this time object represents
+         *
          * @return Seconds from midnight
          */
         public int ToSeconds() {

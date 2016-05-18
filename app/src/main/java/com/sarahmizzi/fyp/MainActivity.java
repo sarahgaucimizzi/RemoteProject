@@ -74,6 +74,9 @@ public class MainActivity extends AppCompatActivity
     private Handler callbackHandler = new Handler();
     private View.OnTouchListener feedbackTouchListener;
 
+    private ApiCallback<String> defaultActionCallback = ApiMethod.getDefaultActionCallback();
+    private ApiCallback<Integer> defaultIntActionCallback = ApiMethod.getDefaultActionCallback();
+
     private int currentActivePlayerId = -1;
     private String currentNowPlayingItemType = null;
     private boolean isPlaying = false;
@@ -205,7 +208,10 @@ public class MainActivity extends AppCompatActivity
         setupButtons();
     }
 
-    public void loadButtons(){
+    /*
+     * Map buttons
+     */
+    public void loadButtons() {
         rewindButton = (ImageButton) findViewById(R.id.rewind_button);
         fastForwardButton = (ImageButton) findViewById(R.id.fastforward_button);
         stopButton = (ImageButton) findViewById(R.id.stop_button);
@@ -255,8 +261,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        // Reconnect on resume
         hostConnectionObserver.registerPlayerObserver(this, true);
-        if(!tcpClient.getClient().isConnected()) {
+        if (!tcpClient.getClient().isConnected()) {
             tcpClient = new TcpClient(mHostPreferences.getString("ADDRESS", "error"));
             tcpClient.getClient().setTimeout(0);
         }
@@ -265,6 +272,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
+        // Unregister and stop on pause
         hostConnectionObserver.unregisterPlayerObserver(this);
         tcpClient.getClient().close();
     }
@@ -272,10 +280,10 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_reconnect) {
+            // Remove credentials from memory
             mHostPreferences.edit().clear().commit();
             Intent intent = new Intent(MainActivity.this, ConnectHostActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -283,10 +291,11 @@ public class MainActivity extends AppCompatActivity
             finish();
         } else if (id == R.id.nav_update) {
             updateRemote();
-        } else if(id == R.id.nav_default_ui){
+        } else if (id == R.id.nav_default_ui) {
             loadDefaultRemote();
         } else if (id == R.id.nav_logout) {
             mFirebaseButtonRef.unauth();
+            // Remove credentials from memort
             mUserPreferences.edit().clear().commit();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -299,6 +308,9 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /*
+     * Set on click listeners for buttons
+     */
     public void setupButtons() {
         rewindButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -407,8 +419,6 @@ public class MainActivity extends AppCompatActivity
                 ButtonTransaction transaction = new ButtonTransaction(buttonTypes[14]);
                 Firebase transactionRef = mFirebaseButtonRef.child(uID);
                 transactionRef.push().setValue(transaction);
-                /*GUI.ShowNotification notification = new GUI.ShowNotification("Hello", "Woo it works!");
-                notification.execute(hostManager.getConnection(), defaultActionCallback, callbackHandler);*/
 
                 TcpRequest request = new TcpRequest();
                 request.message = uID;
@@ -494,6 +504,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /*
+     * Change icon if video is playing
+     */
     public void setPlayPauseButton() {
         if (isPlaying) {
             playPauseButton.setImageResource(R.drawable.ic_pause_black_48dp);
@@ -502,8 +515,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private ApiCallback<String> defaultActionCallback = ApiMethod.getDefaultActionCallback();
-    private ApiCallback<Integer> defaultIntActionCallback = ApiMethod.getDefaultActionCallback();
 
     private ApiCallback<Integer> defaultPlaySpeedChangedCallback = new ApiCallback<Integer>() {
         @Override
@@ -539,39 +550,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void playerOnStop() {
-        HostInfo hostInfo = hostManager.getHostInfo();
-
         isPlaying = false;
         setPlayPauseButton();
-        /*switchToPanel(R.id.info_panel, true);
-        infoTitle.setText(R.string.nothing_playing);
-        infoMessage.setText(String.format(getString(R.string.connected_to), hostInfo.getName()));*/
     }
 
     public void playerOnConnectionError(int errorCode, String description) {
         HostInfo hostInfo = hostManager.getHostInfo();
-
-        /*switchToPanel(R.id.info_panel, false);
-        if (hostInfo != null) {
-            infoTitle.setText(R.string.connecting);
-            // check error code
-            infoMessage.setText(String.format(getString(R.string.connecting_to), hostInfo.getName(), hostInfo.getAddress()));
-        } else {
-            infoTitle.setText(R.string.no_xbmc_configured);
-            infoMessage.setText(null);
-        }*/
     }
 
     public void playerNoResultsYet() {
-        // Initialize info panel
-        /*switchToPanel(R.id.info_panel, false);
-        HostInfo hostInfo = hostManager.getHostInfo();
-        if (hostInfo != null) {
-            infoTitle.setText(R.string.connecting);
-        } else {
-            infoTitle.setText(R.string.no_xbmc_configured);
-        }
-        infoMessage.setText(null);*/
     }
 
     public void systemOnQuit() {
@@ -586,60 +573,22 @@ public class MainActivity extends AppCompatActivity
 
     private void setNowPlayingInfo(ListType.ItemsAll nowPlaying,
                                    PlayerType.PropertyValue properties) {
-        String title, underTitle, thumbnailUrl;
-        int currentRewindIcon, currentFastForwardIcon;
 
         switch (nowPlaying.type) {
             case ListType.ItemsAll.TYPE_MOVIE:
                 Log.d(TAG, nowPlaying.type.toString() + " : " + nowPlaying.title);
-                /*switchToPanel(R.id.media_panel, true);
-
-                title = nowPlaying.title;
-                underTitle = nowPlaying.tagline;
-                thumbnailUrl = nowPlaying.thumbnail;
-                currentFastForwardIcon = fastForwardIcon;
-                currentRewindIcon = rewindIcon;*/
                 break;
             case ListType.ItemsAll.TYPE_EPISODE:
                 Log.d(TAG, nowPlaying.type.toString() + " : " + nowPlaying.title);
-                /*switchToPanel(R.id.media_panel, true);
-
-                title = nowPlaying.title;
-                String season = String.format(getString(R.string.season_episode_abbrev), nowPlaying.season, nowPlaying.episode);
-                underTitle = String.format("%s | %s", nowPlaying.showtitle, season);
-                thumbnailUrl = nowPlaying.art.poster;
-                currentFastForwardIcon = fastForwardIcon;
-                currentRewindIcon = rewindIcon;*/
                 break;
             case ListType.ItemsAll.TYPE_SONG:
                 Log.d(TAG, nowPlaying.type.toString() + " : " + nowPlaying.title);
-                /*switchToPanel(R.id.media_panel, true);
-
-                title = nowPlaying.title;
-                underTitle = nowPlaying.displayartist + " | " + nowPlaying.album;
-                thumbnailUrl = nowPlaying.thumbnail;
-                currentFastForwardIcon = skipNextIcon;
-                currentRewindIcon = skipPreviousIcon;*/
                 break;
             case ListType.ItemsAll.TYPE_MUSIC_VIDEO:
                 Log.d(TAG, nowPlaying.type.toString() + " : " + nowPlaying.title);
-                /*switchToPanel(R.id.media_panel, true);
-
-                title = nowPlaying.title;
-                underTitle = Utils.listStringConcat(nowPlaying.artist, ", ") + " | " + nowPlaying.album;
-                thumbnailUrl = nowPlaying.thumbnail;
-                currentFastForwardIcon = fastForwardIcon;
-                currentRewindIcon = rewindIcon;*/
                 break;
             case ListType.ItemsAll.TYPE_CHANNEL:
                 Log.d(TAG, nowPlaying.type.toString() + " : " + nowPlaying.title);
-                /*switchToPanel(R.id.media_panel, true);
-
-                title = nowPlaying.label;
-                underTitle = nowPlaying.title;
-                thumbnailUrl = nowPlaying.thumbnail;
-                currentFastForwardIcon = fastForwardIcon;
-                currentRewindIcon = rewindIcon;*/
                 break;
             default:
                 Log.d(TAG, nowPlaying.type.toString() + " - default case : " + nowPlaying.title);
@@ -651,33 +600,9 @@ public class MainActivity extends AppCompatActivity
                 } catch (IOException e) {
                     Log.e(TAG, "IOEXCEPTION:" + e.getMessage());
                 }
-                /*switchToPanel(R.id.media_panel, true);
-                title = nowPlaying.label;
-                underTitle = "";
-                thumbnailUrl = nowPlaying.thumbnail;
-                currentFastForwardIcon = fastForwardIcon;
-                currentRewindIcon = rewindIcon;*/
 
                 break;
         }
-
-        //nowPlayingTitle.setText(title);
-        //nowPlayingDetails.setText(underTitle);
-
-        //fastForwardButton.setImageResource(currentFastForwardIcon);
-        //rewindButton.setImageResource(currentRewindIcon);
-//        // If not video, change aspect ration of poster to a square
-//        boolean isVideo = (nowPlaying.type.equals(ListType.ItemsAll.TYPE_MOVIE)) ||
-//                (nowPlaying.type.equals(ListType.ItemsAll.TYPE_EPISODE));
-//        if (!isVideo) {
-//            ViewGroup.LayoutParams layoutParams = thumbnail.getLayoutParams();
-//            layoutParams.width = layoutParams.height;
-//            thumbnail.setLayoutParams(layoutParams);
-//        }
-
-        /*UIUtils.loadImageWithCharacterAvatar(getActivity(), hostManager,
-                thumbnailUrl, title,
-                thumbnail, thumbnail.getWidth(), thumbnail.getHeight());*/
     }
 
     public void readJsonFromUrl(String link, String id) throws IOException, JSONException {
@@ -688,7 +613,7 @@ public class MainActivity extends AppCompatActivity
 
         // Convert to a JSON object to print data
         com.google.gson.JsonParser jp = new com.google.gson.JsonParser();
-        //Convert the input stream to a json element
+        // Convert the input stream to a json element
         JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
         JsonObject rootObj = root.getAsJsonObject();
 
@@ -726,7 +651,7 @@ public class MainActivity extends AppCompatActivity
         videoRef.push().setValue(video);
     }
 
-    public void loadDefaultRemote(){
+    public void loadDefaultRemote() {
         loadButtons();
         setupButtons();
         defaultUI.setVisibility(View.VISIBLE);
@@ -734,7 +659,7 @@ public class MainActivity extends AppCompatActivity
 
         Date date = new Date();
         ArrayList<String> buttons = new ArrayList<>();
-        for(int i=0; i < buttonTypes.length; i++){
+        for (int i = 0; i < buttonTypes.length; i++) {
             buttons.add(buttonTypes[i]);
         }
         LayoutLog log = new LayoutLog("DEFAULT", date.toString(), buttons);
@@ -742,6 +667,9 @@ public class MainActivity extends AppCompatActivity
         logRef.push().setValue(log);
     }
 
+    /*
+     * Set adaptive layout
+     */
     public void updateRemote() {
         final ArrayList<RemoteButtonData> remoteButtonTransactionData = new ArrayList<>();
 
@@ -750,14 +678,14 @@ public class MainActivity extends AppCompatActivity
         queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot querySnapshot) {
-                for(int i = 0; i < buttonTypes.length; i++){
+                for (int i = 0; i < buttonTypes.length; i++) {
                     remoteButtonTransactionData.add(new RemoteButtonData(buttonTypes[i], 0));
                 }
                 for (DataSnapshot currentDataSnapshot : querySnapshot.getChildren()) {
                     ButtonTransaction current = currentDataSnapshot.getChildren().iterator().next().getValue(ButtonTransaction.class);
 
-                    for(int j = 0; j < remoteButtonTransactionData.size(); j++){
-                        if(current.getDescription().equals(remoteButtonTransactionData.get(j).getDescription())){
+                    for (int j = 0; j < remoteButtonTransactionData.size(); j++) {
+                        if (current.getDescription().equals(remoteButtonTransactionData.get(j).getDescription())) {
                             remoteButtonTransactionData.get(j).incrementCount();
                             break;
                         }
@@ -775,19 +703,17 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    public ArrayList<RemoteButtonData> sortByMostFrequentlyUsed(ArrayList<RemoteButtonData> list){
+    public ArrayList<RemoteButtonData> sortByMostFrequentlyUsed(ArrayList<RemoteButtonData> list) {
         ArrayList<RemoteButtonData> sortedList = new ArrayList<>();
         sortedList.add(list.get(0));
 
-        for(int i = 1; i < list.size(); i++){
-            for(int j = 0; j < sortedList.size(); j++){
-                if((list.get(i).getCount() < sortedList.get(j).getCount()) && (j == (sortedList.size() - 1))){
+        for (int i = 1; i < list.size(); i++) {
+            for (int j = 0; j < sortedList.size(); j++) {
+                if ((list.get(i).getCount() < sortedList.get(j).getCount()) && (j == (sortedList.size() - 1))) {
                     sortedList.add(list.get(i));
-                }
-                else if((list.get(i).getCount() < sortedList.get(j).getCount())){
+                } else if ((list.get(i).getCount() < sortedList.get(j).getCount())) {
                     continue;
-                }
-                else if((list.get(i).getCount() > sortedList.get(j).getCount())){
+                } else if ((list.get(i).getCount() > sortedList.get(j).getCount())) {
                     sortedList.add(j, list.get(i));
                     break;
                 }
@@ -797,7 +723,7 @@ public class MainActivity extends AppCompatActivity
         return sortedList;
     }
 
-    public void updateRemoteUI(ArrayList<RemoteButtonData> sortedList){
+    public void updateRemoteUI(ArrayList<RemoteButtonData> sortedList) {
         defaultUI.setVisibility(View.GONE);
         adaptiveUI.setVisibility(View.VISIBLE);
 
@@ -821,18 +747,18 @@ public class MainActivity extends AppCompatActivity
         buttonsList.add(button14);
         buttonsList.add(button15);
 
-        for(int i = 0; i < buttonTypes.length; i++){
+        for (int i = 0; i < buttonTypes.length; i++) {
             list.add(new ButtonTransaction(buttonTypes[i]));
         }
 
-        for(int i = 0; i < sortedList.size(); i++){
-            switch(sortedList.get(i).getDescription()){
+        for (int i = 0; i < sortedList.size(); i++) {
+            switch (sortedList.get(i).getDescription()) {
                 case "REWIND":
                     buttonsList.get(0).setImageResource(R.drawable.ic_rewind_black_48dp);
                     rewindButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(ButtonTransaction item : list){
-                        if(item.getDescription().equals("REWIND")){
+                    for (ButtonTransaction item : list) {
+                        if (item.getDescription().equals("REWIND")) {
                             list.remove(item);
                             break;
                         }
@@ -843,8 +769,8 @@ public class MainActivity extends AppCompatActivity
                     buttonsList.get(0).setImageResource(R.drawable.ic_fast_forward_black_48dp);
                     fastForwardButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(ButtonTransaction item : list){
-                        if(item.getDescription().equals("FASTFORWARD")){
+                    for (ButtonTransaction item : list) {
+                        if (item.getDescription().equals("FASTFORWARD")) {
                             list.remove(item);
                             break;
                         }
@@ -855,8 +781,8 @@ public class MainActivity extends AppCompatActivity
                     buttonsList.get(0).setImageResource(R.drawable.ic_stop_black_48dp);
                     stopButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(ButtonTransaction item : list){
-                        if(item.getDescription().equals("STOP")){
+                    for (ButtonTransaction item : list) {
+                        if (item.getDescription().equals("STOP")) {
                             list.remove(item);
                             break;
                         }
@@ -867,8 +793,8 @@ public class MainActivity extends AppCompatActivity
                     buttonsList.get(0).setImageResource(R.drawable.ic_play_black_48dp);
                     playPauseButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(ButtonTransaction item : list){
-                        if(item.getDescription().equals("PLAYPAUSE")){
+                    for (ButtonTransaction item : list) {
+                        if (item.getDescription().equals("PLAYPAUSE")) {
                             list.remove(item);
                             break;
                         }
@@ -879,8 +805,8 @@ public class MainActivity extends AppCompatActivity
                     buttonsList.get(0).setImageResource(R.drawable.ic_volume_high_black_48dp);
                     volumeUpButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(ButtonTransaction item : list){
-                        if(item.getDescription().equals("VOLUMEUP")){
+                    for (ButtonTransaction item : list) {
+                        if (item.getDescription().equals("VOLUMEUP")) {
                             list.remove(item);
                             break;
                         }
@@ -891,8 +817,8 @@ public class MainActivity extends AppCompatActivity
                     buttonsList.get(0).setImageResource(R.drawable.ic_volume_medium_black_48dp);
                     volumeDownButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(ButtonTransaction item : list){
-                        if(item.getDescription().equals("VOLUMEDOWN")){
+                    for (ButtonTransaction item : list) {
+                        if (item.getDescription().equals("VOLUMEDOWN")) {
                             list.remove(item);
                             break;
                         }
@@ -903,8 +829,8 @@ public class MainActivity extends AppCompatActivity
                     buttonsList.get(0).setImageResource(R.drawable.ic_arrow_up_black_48dp);
                     upButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(ButtonTransaction item : list){
-                        if(item.getDescription().equals("UP")){
+                    for (ButtonTransaction item : list) {
+                        if (item.getDescription().equals("UP")) {
                             list.remove(item);
                             break;
                         }
@@ -915,20 +841,20 @@ public class MainActivity extends AppCompatActivity
                     buttonsList.get(0).setImageResource(R.drawable.ic_arrow_down_black_48dp);
                     downButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(ButtonTransaction item : list){
-                        if(item.getDescription().equals("DOWN")){
+                    for (ButtonTransaction item : list) {
+                        if (item.getDescription().equals("DOWN")) {
                             list.remove(item);
                             break;
                         }
                     }
                     buttons.add("DOWN");
                     break;
-                case"LEFT":
+                case "LEFT":
                     buttonsList.get(0).setImageResource(R.drawable.ic_arrow_left_black_48dp);
                     leftButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(ButtonTransaction item : list){
-                        if(item.getDescription().equals("LEFT")){
+                    for (ButtonTransaction item : list) {
+                        if (item.getDescription().equals("LEFT")) {
                             list.remove(item);
                             break;
                         }
@@ -939,8 +865,8 @@ public class MainActivity extends AppCompatActivity
                     buttonsList.get(0).setImageResource(R.drawable.ic_arrow_right_black_48dp);
                     rightButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(ButtonTransaction item : list){
-                        if(item.getDescription().equals("RIGHT")){
+                    for (ButtonTransaction item : list) {
+                        if (item.getDescription().equals("RIGHT")) {
                             list.remove(item);
                             break;
                         }
@@ -951,8 +877,8 @@ public class MainActivity extends AppCompatActivity
                     buttonsList.get(0).setImageResource(R.drawable.ic_arrow_left_bold_circle_black_48dp);
                     backButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(ButtonTransaction item : list){
-                        if(item.getDescription().equals("BACK")){
+                    for (ButtonTransaction item : list) {
+                        if (item.getDescription().equals("BACK")) {
                             list.remove(item);
                             break;
                         }
@@ -963,8 +889,8 @@ public class MainActivity extends AppCompatActivity
                     buttonsList.get(0).setImageResource(R.drawable.ic_information_black_48dp);
                     infoButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(ButtonTransaction item : list){
-                        if(item.getDescription().equals("INFO")){
+                    for (ButtonTransaction item : list) {
+                        if (item.getDescription().equals("INFO")) {
                             list.remove(item);
                             break;
                         }
@@ -975,8 +901,8 @@ public class MainActivity extends AppCompatActivity
                     buttonsList.get(0).setImageResource(R.drawable.ic_checkbox_blank_circle_black_48dp);
                     okButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(ButtonTransaction item : list){
-                        if(item.getDescription().equals("OK")){
+                    for (ButtonTransaction item : list) {
+                        if (item.getDescription().equals("OK")) {
                             list.remove(item);
                             break;
                         }
@@ -987,8 +913,8 @@ public class MainActivity extends AppCompatActivity
                     buttonsList.get(0).setImageResource(R.drawable.ic_home_black_48dp);
                     homeButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(ButtonTransaction item : list){
-                        if(item.getDescription().equals("HOME")){
+                    for (ButtonTransaction item : list) {
+                        if (item.getDescription().equals("HOME")) {
                             list.remove(item);
                             break;
                         }
@@ -999,8 +925,8 @@ public class MainActivity extends AppCompatActivity
                     buttonsList.get(0).setImageResource(R.drawable.ic_window_restore_black_48dp);
                     moreInfoButton = buttonsList.get(0);
                     buttonsList.remove(0);
-                    for(ButtonTransaction item : list){
-                        if(item.getDescription().equals("MOREINFO")){
+                    for (ButtonTransaction item : list) {
+                        if (item.getDescription().equals("MOREINFO")) {
                             list.remove(item);
                             break;
                         }
@@ -1010,8 +936,8 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        for(int i = 0; i < list.size(); i++){
-            switch(list.get(i).getDescription()){
+        for (int i = 0; i < list.size(); i++) {
+            switch (list.get(i).getDescription()) {
                 case "REWIND":
                     buttonsList.get(0).setImageResource(R.drawable.ic_rewind_black_48dp);
                     rewindButton = buttonsList.get(0);
@@ -1060,7 +986,7 @@ public class MainActivity extends AppCompatActivity
                     buttonsList.remove(0);
                     buttons.add("DOWN");
                     break;
-                case"LEFT":
+                case "LEFT":
                     buttonsList.get(0).setImageResource(R.drawable.ic_arrow_left_black_48dp);
                     leftButton = buttonsList.get(0);
                     buttonsList.remove(0);

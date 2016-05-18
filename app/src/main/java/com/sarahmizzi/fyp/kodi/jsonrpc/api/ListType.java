@@ -2,8 +2,11 @@ package com.sarahmizzi.fyp.kodi.jsonrpc.api;
 
 /**
  * Created by Sarah on 29-Feb-16.
+ * Refer to Kore Remote on Android.
  */
+
 import java.util.List;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -406,7 +409,7 @@ public class ListType {
         public final String STARTTIME = "starttime";
         public final String ENDTIME = "endtime";
 
-        public final String[] allValues = new String[] {
+        public final String[] allValues = new String[]{
                 TITLE, ARTIST, ALBUMARTIST, GENRE, YEAR, RATING, ALBUM, TRACK, DURATION, COMMENT,
                 LYRICS, MUSICBRAINZTRACKID, MUSICBRAINZARTISTID, MUSICBRAINZALBUMID,
                 MUSICBRAINZALBUMARTISTID, PLAYCOUNT, FANART, DIRECTOR, TRAILER, TAGLINE, PLOT,
@@ -494,7 +497,7 @@ public class ListType {
         public final String LASTMODIFIED = "lastmodified";
         public final String MIMETYPE = "mimetype";
 
-        public final String[] allValues = new String[] {
+        public final String[] allValues = new String[]{
                 TITLE, ARTIST, ALBUMARTIST, GENRE, YEAR, RATING, ALBUM, TRACK, DURATION, COMMENT,
                 LYRICS, MUSICBRAINZTRACKID, MUSICBRAINZARTISTID, MUSICBRAINZALBUMID,
                 MUSICBRAINZALBUMARTISTID, PLAYCOUNT, FANART, DIRECTOR, TRAILER, TAGLINE, PLOT,
